@@ -1,4 +1,4 @@
-# Rojgar Android App ![alt text](https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png){ width: 50px; }
+# Rojgar Android App <img src="https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png" style="width: 50px;" >
 This app is made using react-native framewok
 
 # What is inside?
