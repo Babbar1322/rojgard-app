@@ -1,4 +1,4 @@
-# Rojgar Android App
+# Rojgar Android App ![alt text](https://cdn4.iconfinder.com/data/icons/logos-3/600/React.js_logo-512.png)
 This app is made using react-native framework
 
 # What is inside?
