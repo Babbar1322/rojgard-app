@@ -7,10 +7,10 @@ There are two types of users in this app:
 2. Providers - People who are looking for employees.
 
 ## Employees
-Employees can search jobs after creating their accounts.
-They can log into their account by given phone number and UserID (Created While Creating Account).
-Employees can upload thier Resume, Experience of work and Other Documents.
+Employees can search jobs after creating their accounts.<br />
+They can log into their account by given phone number and UserID (Created While Creating Account).<br />
+Employees can upload thier Resume, Experience of work and Other Documents.<br />
 
 ## Providers
-Providers can post thier type of job which they are giving
-They can see which jobs they are posted 
+Providers can post thier type of job which they are giving<br />
+They can see which jobs they are posted <br />
