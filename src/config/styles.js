@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
         marginVertical: '5%'
     },
     card: {
-        paddingVertical: 50,
+        paddingVertical: 60,
         paddingHorizontal: '10%',
         borderRadius: 20
     }

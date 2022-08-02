@@ -7,13 +7,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import styles from '../../config/styles';
 import { api, color } from '../../config/config';
-import { selectUserId, setIsActive } from '../../redux/slice/authSlice';
+import { selectName, selectUserId, setIsActive } from '../../redux/slice/authSlice';
 import { Loading, paymentSuccess } from '../../components/lottie';
 import Card from '../../../assets/Images/Card.jpg';
 
 export default function ActivateId({ navigation }) {
     const dispatch = useDispatch();
     const id = useSelector(selectUserId);
+    const name = useSelector(selectName);
     const [balance, setBalance] = useState(0);
     const [packageData, setPackageData] = useState('');
 
@@ -85,13 +86,10 @@ export default function ActivateId({ navigation }) {
                         <>
                             <Text style={[styles.bold, styles.h1, { marginVertical: '5%' }]}>Activate Your Account{'\n'}with Coins</Text>
                             <Text style={[styles.bold, { textAlign: 'right' }]}>Your Balance: {balance}</Text>
-                            {/* <Text style={[styles.bold]}>Package Name: {packageData.name}</Text>
-                            <TextInput placeholder='User ID' style={[styles.input, styles.shadow_sm]} editable={false} value={id} />
-                            <TextInput placeholder='Coins' style={[styles.input, styles.shadow_sm]} editable={false} value={"Package amount: " + packageData.amount} /> */}
                             <ImageBackground source={Card} style={[styles.card, styles.shadow_sm]} resizeMode='stretch' borderRadius={20}>
-                                <Text style={[styles.bold, styles.h1, {color: color.white, marginVertical: '2%'}]}>Premium Subscription</Text>
-                                <Text style={[styles.bold, {color: color.white, marginVertical: '2%'}]}>Cost: 200 Coins</Text>
-                                <Text style={[styles.bold, {color: color.white, marginVertical: '2%'}]}>Your UserID: {id}</Text>
+                                <Text style={[styles.bold, styles.h1, {color: color.white, marginVertical: '3%'}]}>{packageData.name}</Text>
+                                <Text style={[styles.bold, {color: color.white, marginVertical: '3%'}]}>Cost: {packageData.amount} Coins</Text>
+                                <Text style={[styles.bold, {color: color.white, marginVertical: '3%', fontSize: 16}]}>{name} #{id}</Text>
                             </ImageBackground>
                             <TouchableOpacity style={[styles.btn, styles.shadow_sm, { marginVertical: '5%' }]} onPress={activate}>
                                 <Text style={[styles.bold, styles.text_center, { color: '#fff' }]}>Activate Package</Text>

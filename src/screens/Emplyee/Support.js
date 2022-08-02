@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, FlatList } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
+import moment from 'moment';
 
 import styles from '../../config/styles';
 import { api, color } from '../../config/config';
 import { selectUserId } from '../../redux/slice/authSlice';
 import { Loading } from '../../components/lottie';
+import Groups from '../../config/Groups';
 
-export default function Support({route, navigation}) {
+export default function Support({ route, navigation }) {
     const userId = useSelector(selectUserId);
     const [chat, setChat] = useState([]);
     const [message, setMessage] = useState('');
@@ -19,17 +21,17 @@ export default function Support({route, navigation}) {
 
     const getChat = async () => {
         setLoading(true);
-        await axios.get(api + 'getChat/?id=' + userId + "&chatId=" + route.params.chatId).then(res => {
-            setChat(res.data.chat);
+        await axios.get(api + 'getChat/?chatId=' + route.params.chatId).then(res => {
+            setChat(Groups(res.data.chat));
             setLoading(false);
         }).then(() => {
-            ScrollRef.current.scrollToEnd();
+            ScrollRef.current.scrollToOffset({ animated: true, offset: 0 });
         }).catch(err => {
             setLoading(false);
             console.log(err);
         });
     };
-    
+
     const sendChat = async () => {
         setLoading(true);
         if (message.length < 1) {
@@ -48,35 +50,55 @@ export default function Support({route, navigation}) {
         });
     }
 
+    const renderItem = ({ item, index }) => {
+        if (item.type && item.type === 'day') {
+            return (
+                <View key={index} style={[styles.row, styles.justifyCenter]}>
+                    <View style={{ height: 1, backgroundColor: color.grey, width: '30%' }}></View>
+                    <Text key={item.created_at} style={[styles.bold, { color: color.grey, fontSize: 12, marginHorizontal: '5%' }]}>{item.date}</Text>
+                    <View style={{ height: 1, backgroundColor: color.grey, width: '30%' }}></View>
+                </View>
+            )
+        }
+        if (item.from === userId) {
+            return (
+                <View key={item.id} style={styles.chatRight}>
+                    <Text style={[styles.medium, { color: '#fff', fontSize: 15 }]}>{item.message}</Text>
+                    <Text style={{ textAlign: 'right', fontSize: 10, color: color.grey, fontWeight: '500' }}>{moment(item.created_at).format('hh:MM a')}</Text>
+                </View>
+            )
+        } else {
+            return (
+                <View key={item.id} style={styles.chatLeft}>
+                    <Text style={[styles.medium, { color: color.red, fontSize: 15 }]}>{item.message}</Text>
+                    <Text style={{ textAlign: 'right', fontSize: 10, color: color.grey, fontWeight: '500' }}>{moment(item.created_at).format('hh:MM a')}</Text>
+                </View>
+            )
+        }
+    }
+
     useEffect(() => {
         getChat();
-        setTimeout(() => {
-            ScrollRef.current.scrollToEnd();
-        }, 2000);
     }, []);
     return (
         <View style={styles.container}>
             <View style={{ paddingVertical: '5%' }}>
                 <Text style={[styles.bold, styles.text_center, { fontSize: 16 }]}>Chat with Admin</Text>
             </View>
-            <ScrollView ref={ScrollRef} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-                <View style={{ paddingHorizontal: '5%' }}>
-                    {chat.map((item, index) => (
-                        item.from === userId ?
-                            <View style={styles.chatRight}>
-                                <Text style={[styles.medium, { color: '#fff', fontSize: 15 }]}>{item.message}</Text>
-                            </View> :
-                            <View style={styles.chatLeft}>
-                                <Text style={[styles.medium, {color: color.red, fontSize: 15}]}>{item.message}</Text>
-                            </View>
-                    ))}
-                </View>
-            </ScrollView>
+            <FlatList
+                data={chat}
+                inverted
+                keyExtractor={(item, index) => index.toString()}
+                ref={ScrollRef}
+                style={{ flex: 1, paddingHorizontal: '5%' }}
+                showsVerticalScrollIndicator={false}
+                renderItem={renderItem} />
             <View style={[styles.row, styles.justifyBetween, { paddingHorizontal: '5%' }]}>
                 <TextInput placeholder='Enter Message...' style={[styles.input, styles.shadow_sm, { width: '80%' }]} multiline onChangeText={(e) => setMessage(e)} value={message} />
-                {loading ? <TouchableOpacity style={[styles.btn, styles.shadow_sm, { paddingHorizontal: '5%', maxWidth: '17%' }]} activeOpacity={1}>
-                    <AnimatedLottieView source={Loading} autoPlay loop style={{ width: '100%' }} />
-                </TouchableOpacity> :
+                {loading ?
+                    <TouchableOpacity style={[styles.btn, styles.shadow_sm, { paddingHorizontal: '5%', maxWidth: '17%' }]} activeOpacity={1}>
+                        <AnimatedLottieView source={Loading} autoPlay loop style={{ width: '100%' }} />
+                    </TouchableOpacity> :
                     <TouchableOpacity style={[styles.btn, styles.shadow_sm, { paddingHorizontal: '5%', maxWidth: '17%' }]} onPress={sendChat}>
                         <Feather name="send" size={24} color="white" />
                     </TouchableOpacity>}
