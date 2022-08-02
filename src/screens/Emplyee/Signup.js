@@ -70,17 +70,17 @@ export default function Signup({ route, navigation }) {
    }
 
    const handleSponsor = async () => {
-      const res = await fetch(api + 'checkSponsor/?sponsorId=' + sponsorId, {
-         method: "GET",
-         headers: {
-            "Accept": "application/json"
+      await axios.get(api + 'checkSponsor/?sponsorId=' + sponsorId).then(res => {
+         if(res.data.user == null){
+            setSponsorErr(true);
+            return;
+         } else {
+            setSponsorData(res.data);
          }
+         console.log(res.data);
+      }).catch(err => {
+         console.log(err);
       });
-      const json = await res.json();
-      if (json.user === null) {
-         return setSponsorErr(true);
-      }
-      setSponsorData(json);
    }
 
    const screen = () => {
@@ -154,7 +154,16 @@ export default function Signup({ route, navigation }) {
    useEffect(() => {
       if(route.params){
          setSponsorId(route.params.id);
-         handleSponsor();
+         axios.get(api + 'checkSponsor/?sponsorId=' + route.params.id).then(res => {
+            if(res.data.user == null){
+               setSponsorErr(true);
+               return;
+            } else {
+               setSponsorData(res.data);
+            }
+         }).catch(err => {
+            console.log(err);
+         });
       }
    });
 

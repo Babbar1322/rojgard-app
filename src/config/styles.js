@@ -182,6 +182,11 @@ const styles = StyleSheet.create({
         borderColor: color.red,
         alignSelf: 'center',
         marginVertical: '5%'
+    },
+    card: {
+        paddingVertical: 50,
+        paddingHorizontal: '10%',
+        borderRadius: 20
     }
 });
 

@@ -10,7 +10,7 @@ import { api, color } from '../../config/config';
 import { selectUserId } from '../../redux/slice/authSlice';
 import { Loading } from '../../components/lottie';
 
-export default function Support() {
+export default function Support({route, navigation}) {
     const userId = useSelector(selectUserId);
     const [chat, setChat] = useState([]);
     const [message, setMessage] = useState('');
@@ -19,7 +19,7 @@ export default function Support() {
 
     const getChat = async () => {
         setLoading(true);
-        await axios.get(api + 'getChat/?id=' + userId).then(res => {
+        await axios.get(api + 'getChat/?id=' + userId + "&chatId=" + route.params.chatId).then(res => {
             setChat(res.data.chat);
             setLoading(false);
         }).then(() => {
@@ -34,10 +34,10 @@ export default function Support() {
         setLoading(true);
         if (message.length < 1) {
             setLoading(false);
-            return
+            return;
         }
         await axios.post(api + 'postChat', {
-            message: message, userId: userId
+            message: message, userId: userId, supportId: route.params.chatId
         }).then(() => {
             setMessage("");
             getChat();

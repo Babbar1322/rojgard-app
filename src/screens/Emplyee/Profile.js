@@ -75,7 +75,7 @@ export default function Profile({ navigation }) {
                     {profileStatus == 1 ? 
                     <Image source={{uri: 'https://rojgar.biz/' + profileImage}} style={[styles.image, {borderColor: '#fff'}]} />:
                     <Image source={{ uri: 'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg' }} style={[styles.image, {borderColor: '#fff'}]} />}
-                    <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginTop: '5%', marginBottom: '10%' }]}>{name}</Text>
+                    <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginBottom: '10%' }]}>{name}</Text>
                 </ImageBackground>
                 <View style={{ paddingHorizontal: '5%', marginTop: '5%' }}>
                     {profileStatus == 0 ? 
@@ -114,8 +114,8 @@ export default function Profile({ navigation }) {
                     <TouchableOpacity
                         style={[styles.btn, styles.shadow_sm, { marginVertical: '2%' }]}
                         activeOpacity={0.5}
-                        onPress={() => navigation.navigate('Support')}>
-                        <Text style={[styles.bold, styles.text_center, { color: color.white }]}>Need Help?</Text>
+                        onPress={() => navigation.navigate('Tickets')}>
+                        <Text style={[styles.bold, styles.text_center, { color: color.white }]}>Raise a ticket</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
