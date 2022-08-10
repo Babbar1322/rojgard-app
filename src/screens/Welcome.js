@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { View, Text, StatusBar, Image, TouchableOpacity, BackHandler, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TouchableOpacity, BackHandler, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import styles from '../config/styles';
-import WelcomeVector from '../../assets/Images/Welcome.png';
 import { color } from '../config/config';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -34,25 +33,31 @@ export default function Welcome({ navigation }) {
 
     return (
         <>
-            <View style={[styles.container, { paddingHorizontal: '7%' }]}>
-                <Text style={[styles.text_center, styles.h1, { marginVertical: '15%' }]}>Which service are you looking for?</Text>
-                <Image source={WelcomeVector} style={{ width: '80%', resizeMode: 'contain', alignSelf: 'center' }} />
+            <View style={styles.container}>
+                <LinearGradient colors={[color.red, color.grey]} start={[0, 0]} end={[1, 0.5]} style={{flex: 1, paddingHorizontal: '7%'}}>
+                <Text style={[styles.text_center, styles.bold, { marginTop: '15%', color: '#fff', fontSize: 35 }]}>Welcome to Rojgar</Text>
+                <Text style={[styles.text_center, styles.h1, styles.bold, { marginVertical: '15%', color: '#fff' }]}>Which service are you looking for?</Text>
+                <Text style={[styles.bold,styles.text_center, {color: '#fff'}]}>You can search for jobs or provide jobs.</Text>
                 <View style={{ position: 'absolute', bottom: '20%', width: '100%', alignSelf: 'center' }}>
-                    <TouchableOpacity activeOpacity={0.5} style={[styles.row, styles.welcome_btn]} onPress={() => navigation.navigate('Login')}>
+                    <TouchableOpacity activeOpacity={0.5} style={[styles.row, styles.welcome_btn, {
+                        backgroundColor: '#00000000', borderColor: '#fff', borderWidth: 2
+                    }]} onPress={() => navigation.navigate('Guest')}>
                         <Text style={[styles.bold, { color: color.white }]}>Seeking for Job</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="white" />
                     </TouchableOpacity>
-                    <View style={{ marginVertical: '5%' }}>
-                        <Text style={[styles.bold, styles.text_center, { color: color.red }]}>OR</Text>
+                    <View style={[styles.row, styles.justifyBetween, { marginVertical: '5%' }]}>
+                        <View style={{height: 1, width: '40%', backgroundColor: '#fff'}}></View>
+                        <Text style={[styles.bold, styles.text_center, { color: color.white }]}>OR</Text>
+                        <View style={{height: 1, width: '40%', backgroundColor: '#fff'}}></View>
                     </View>
                     <TouchableOpacity activeOpacity={0.5} style={[styles.row, styles.welcome_btn, {
                         backgroundColor: '#00000000', borderColor: color.red, borderWidth: 2
-                    }]}
-                        onPress={() => navigation.navigate('ProviderLogin')}>
+                    }]} onPress={() => navigation.navigate('ProviderLogin')}>
                         <Text style={[styles.bold, { color: color.red }]}>Seeking for Employee</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color={color.red} />
                     </TouchableOpacity>
                 </View>
+                </LinearGradient>
             </View>
         </>
     )

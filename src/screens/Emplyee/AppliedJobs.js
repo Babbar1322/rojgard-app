@@ -5,7 +5,7 @@ import { View, Text, ScrollView, Modal, TouchableOpacity, Image } from 'react-na
 import { useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Loading } from '../../components/lottie';
+import { Loading, noData } from '../../components/lottie';
 import { api, color } from '../../config/config';
 
 import styles from '../../config/styles';
@@ -64,6 +64,8 @@ export default function AppliedJobs({ navigation }) {
                         </View>
                     </TouchableOpacity>
                     ))}
+                    {data.length === 0 ? 
+                    <AnimatedLottieView source={noData} autoPlay loop style={{flex: 1, alignSelf: 'center', width: '90%', marginTop: '20%'}} /> : null}
                 </View>
             </ScrollView>
         </View>

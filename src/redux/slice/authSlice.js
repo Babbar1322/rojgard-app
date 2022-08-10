@@ -12,7 +12,10 @@ const initialState = {
     isActive: 0,
     profileStatus: 0,
     isProfileCompleted: 0,
-    profilePhoto: null
+    profilePhoto: null,
+    resume: null,
+    experience: null,
+    exp: null
 }
 
 const authSlice = createSlice({
@@ -31,6 +34,9 @@ const authSlice = createSlice({
             state.profileStatus = action.payload.profileStatus;
             state.isProfileCompleted = action.payload.isProfileCompleted;
             state.profilePhoto = action.payload.profilePhoto;
+            state.resume = action.payload.resume;
+            state.experience = action.payload.experience;
+            state.exp = action.payload.exp;
         },
         setLogout: (state) => {
             state.email = null;
@@ -44,6 +50,9 @@ const authSlice = createSlice({
             state.profileStatus = 0;
             state.isProfileCompleted = 0;
             state.profilePhoto = null;
+            state.resume = null;
+            state.experience = null;
+            state.exp = null;
         },
         completedProfile: (state, action) => {
             state.isProfileCompleted = action.payload.isProfileCompleted;

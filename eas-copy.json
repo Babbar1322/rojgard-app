@@ -1,0 +1,17 @@
+{
+  "cli": {
+    "version": ">= 0.53.1"
+  },
+  "build": {
+    "production": {
+      "developmentClient": true,
+      "distribution": "internal",
+	"android": {
+		"gradleCommand": "assembleRelease"
+	}
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

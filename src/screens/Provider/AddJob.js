@@ -160,9 +160,23 @@ export default function AddJob({ navigation }) {
     const getCategory = async () => {
         setLoading(true);
         await axios.get(api + 'getCategory').then(res => {
-            setLoading(false);
             setCatData(res.data.category);
-            setSubCatData(res.data.subCategory);
+            setLoading(false);
+        }).catch(err => {
+            setLoading(false);
+            console.log(err);
+        });
+    }
+    const getSubCategory = async (catId) => {
+        setLoading(true);
+        await axios.get(api + 'getSubCategory?catId=' + catId).then(res => {
+            if (!res.data.subcategory) {
+                setSubCatData([]);
+                setLoading(false);
+            } else {
+                setSubCatData(res.data.subcategory);
+                setLoading(false);
+            }
         }).catch(err => {
             setLoading(false);
             console.log(err);
@@ -193,18 +207,20 @@ export default function AddJob({ navigation }) {
                     <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job Title' onChangeText={(e) => setTitle(e)} />
                     <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job City' onChangeText={(e) => setCity(e)} />
                     <View style={[styles.row, styles.justifyBetween]}>
-                        <Picker mode='dropdown' selectedValue={category} style={[styles.input, styles.shadow_sm, { width: '48%' }]} onValueChange={(e) => setCategory(e)}>
+                        <Picker selectedValue={category} style={[styles.input, styles.shadow_sm, { width: subCatData.length === 0 ?  '100%' : '48%' }]} onValueChange={(e) => {
+                            setCategory(e)
+                            getSubCategory(e)}}>
                             {/* <Picker.Item value='' label='Category' /> */}
                             {catData.map((item, index) => (
                             <Picker.Item key={index} label={item.cat_name} value={item.id} />
                             ))}
                         </Picker>
-                        <Picker mode='dropdown' selectedValue={subCategory} style={[styles.input, styles.shadow_sm, { width: '48%' }]} onValueChange={(e) => setSubCategory(e)}>
+                        {subCatData.length !== 0 && <Picker selectedValue={subCategory} style={[styles.input, styles.shadow_sm, { width: '48%' }]} onValueChange={(e) => setSubCategory(e)}>
                         {/* <Picker.Item value='' label='Sub Category' /> */}
                         {subCatData.map((item, index) => (
                             <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
                             ))}
-                        </Picker>
+                        </Picker>}
                     </View>
                     <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Employees Required' keyboardType='number-pad' onChangeText={(e) => setEmployees(e)} />
                     <View style={[styles.row, styles.justifyBetween]}>

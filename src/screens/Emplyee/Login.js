@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StatusBar, Image, TextInput, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
+import { View, Text, StatusBar, Image, TextInput, TouchableOpacity, ScrollView, Keyboard, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AnimatedLottieView from 'lottie-react-native';
 import axios from 'axios';
@@ -64,6 +64,9 @@ export default function Login({ route, navigation }) {
             console.log(err);
             if (err.toString().endsWith('400')) {
                 alert('Invalid Details');
+            }
+            if(err.toString().endsWith('405')){
+                Alert.alert('Sorry', "You can't Login to your account, because we disabled your account for some reasons.");
             }
         });
     }

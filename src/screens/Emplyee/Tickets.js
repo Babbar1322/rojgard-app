@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
 
 import styles from '../../config/styles';
-import { Loading } from '../../components/lottie';
+import { Loading, noData } from '../../components/lottie';
 import { color, api } from '../../config/config';
 import { selectUserId } from '../../redux/slice/authSlice';
 
@@ -28,7 +28,6 @@ export default function Tickets({ navigation }) {
     const getTickets = async () => {
         setLoading(true);
         await axios.get(api + 'getTicket/?id=' + userId).then(res => {
-            // console.log(res.data);
             setData(res.data);
         }).catch(err => {
             console.log(err);
@@ -45,7 +44,6 @@ export default function Tickets({ navigation }) {
         await axios.post(api + 'submitTicket', {
             subject: subject, message, message, email: email, topic: topic, userId: userId
         }).then(res => {
-            console.log(res.data);
             getTickets();
             setModalLoading(false);
             setVisible(false);
@@ -63,7 +61,7 @@ export default function Tickets({ navigation }) {
             )
         } else {
             return (
-                <View>
+                data.length === '0' ? <View>
                     {data.map((item, index) => (
                         item.status == 'pending' ?
                             <TouchableOpacity key={index} style={[styles.listItem, styles.row, styles.shadow_sm]} onPress={() => navigation.navigate('Support', { chatId: item.id })}>
@@ -95,7 +93,8 @@ export default function Tickets({ navigation }) {
                                 </View>
                             </View>
                     ))}
-                </View>
+                </View>: 
+                <AnimatedLottieView source={noData} autoPlay loop style={{flex: 1, width: '90%', marginTop: '20%', alignSelf: 'center'}} />
             )
         }
     }

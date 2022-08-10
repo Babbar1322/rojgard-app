@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, ScrollView, TouchableOpacity, Image, Modal, TextInput, BackHandler, Alert, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Modal, ImageBackground, Alert } from 'react-native';
 import * as Progress from 'react-native-progress';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useSelector, useDispatch } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
 import axios from 'axios';
+import { RadioButton } from 'react-native-paper';
 
 import styles from '../../config/styles';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -24,14 +25,23 @@ export default function CompleteProfile({ navigation }) {
 
     const [catData, setCatData] = useState([]);
     const [subCatData, setSubCatData] = useState([]);
-    
+    const [qData, setQData] = useState([]);
+    const [subQData, setSubQData] = useState([]);
+
     const [image, setImage] = useState(null);
-    const [qualification, setQualification] = useState('');
-    const [category, setCategory] = useState('');
-    const [subCategory, setSubCategory] = useState('');
-    const [resume, setResume] = useState('');
-    const [experience, setExperience] = useState('');
-    const [document, setDocument] = useState('');
+    const [qualification, setQualification] = useState(null);
+    const [subQualification, setSubQualification] = useState(null);
+    const [category, setCategory] = useState(null);
+    const [subCategory, setSubCategory] = useState(null);
+    const [resume, setResume] = useState(null);
+    const [experience, setExperience] = useState(null);
+    const [profile, setProfile] = useState(null);
+    const [downloadExp, setDownloadExp] = useState(null);
+    const [downloadResume, setDownloadResume] = useState(null);
+
+    const [haveExperience, setHaveExperience] = useState('no');
+    const [yearsOfExp, setYearsOfExp] = useState(null);
+    const [completed, setCompleted] = useState(0);
 
     const name = useSelector(selectName);
     const userId = useSelector(selectUserId);
@@ -59,35 +69,73 @@ export default function CompleteProfile({ navigation }) {
         }
     };
 
+    const getNull = async () => {
+        setLoading(true);
+        setUpload(true);
+        await axios.get(api + 'getNull/' + userId).then(res => {
+            if(res.data[1] != null){
+                setCompleted(parseFloat(res.data));
+                if(res.data[1].profile_photo){
+                    setProfile(res.data[1].profile_photo);
+                }
+                if(res.data[1].qualification){
+                    setQualification(res.data[1].qualification);
+                }
+                if(res.data[1].sub_qualification){
+                    setSubQualification(res.data[1].sub_qualification);
+                }
+                if(res.data[1].category){
+                    setCategory(res.data[1].category);
+                }
+                if(res.data[1].haveExperience){
+                    setHaveExperience(res.data[1].haveExperience);
+                    if(res.data[1].yearsOfExp){
+                        setYearsOfExp(res.data[1].yearsOfExp);
+                    }
+                    if(res.data[1].experience){
+                        setDownloadExp(res.data[1].experience);
+                    }
+                }
+                if(res.data[1].resume){
+                    setDownloadResume(res.data[1].resume);
+                }
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+        setUpload(false);
+        setLoading(false);
+    }
+
     const sumbitData = async () => {
-        if(!image || !qualification || !category || !subCategory || !resume || !experience || !document){
-            alert("Please Choose All Fields!");
-            return;
-        }
         setUpload(true);
         const formData = new FormData();
-        formData.append('profilePic', {
-            uri: image.uri,
-            name: image.uri.replace(/^.*[\\\/]/, ''),
-            type: image.type + "/" + image.uri.split(/[#?]/)[0].split('.').pop().trim()
-        });
-        formData.append('resume', {
-            uri: resume.uri,
-            name: resume.name,
-            type: resume.mimeType
-        });
-        formData.append('experience', {
-            uri: experience.uri,
-            name: experience.name,
-            type: experience.mimeType
-        });
-        formData.append('document', {
-            uri: document.uri,
-            name: document.name,
-            type: document.mimeType
-        });
+        if (image) {
+            formData.append('profilePic', {
+                uri: image.uri,
+                name: image.uri.replace(/^.*[\\\/]/, ''),
+                type: image.type + "/" + image.uri.split(/[#?]/)[0].split('.').pop().trim()
+            });
+        }
+        if (resume) {
+            formData.append('resume', {
+                uri: resume.uri,
+                name: resume.name,
+                type: resume.mimeType
+            });
+        }
+        if (experience) {
+            formData.append('experience', {
+                uri: experience.uri,
+                name: experience.name,
+                type: experience.mimeType
+            });
+        }
         formData.append('userId', userId);
         formData.append('qualification', qualification);
+        formData.append('subQualification', subQualification);
+        formData.append('haveExperience', haveExperience);
+        formData.append('yearsOfExp', yearsOfExp);
         formData.append('category', category);
         formData.append('subCategory', subCategory);
         await axios.post(api + 'addUserDetails',
@@ -103,16 +151,24 @@ export default function CompleteProfile({ navigation }) {
         ).then((res) => {
             setUpload(false);
             setProgress(0);
-            dispatch(completedProfile({isProfileCompleted: 0}));
+            dispatch(completedProfile({ isProfileCompleted: 0 }));
             navigation.navigate('HomeTab');
-        }).catch(err => console.log(err));
+        }).catch(err => {
+            console.log(err);
+            alert('Please try again!');
+        });
+        setUpload(false);
+        setProgress(0);
     };
 
     const pickResume = async () => {
         const result = await DocumentPicker.getDocumentAsync({
             type: ['image/*', 'application/pdf']
         });
-        if(result.type !== 'cancel'){
+        if (result.type !== 'cancel') {
+            if(result.size > 1500000){
+                return Alert.alert('File Size is too large', 'Please choose a file smaller than 1.5MB')
+            }
             setResume(result);
         }
     }
@@ -121,17 +177,11 @@ export default function CompleteProfile({ navigation }) {
         const result = await DocumentPicker.getDocumentAsync({
             type: ['image/*', 'application/pdf']
         });
-        if(result.type !== 'cancel'){
+        if (result.type !== 'cancel') {
+            if(result.size > 1500000){
+                return Alert.alert('File Size is too large', 'Please choose a file smaller than 1.5MB')
+            }
             setExperience(result);
-        }
-    }
-
-    const pickDocument = async () => {
-        const result = await DocumentPicker.getDocumentAsync({
-            type: ['image/*', 'application/pdf']
-        });
-        if(result.type !== 'cancel'){
-            setDocument(result);
         }
     }
 
@@ -140,7 +190,6 @@ export default function CompleteProfile({ navigation }) {
         setUpload(true);
         await axios.get(api + 'getCategory').then(res => {
             setCatData(res.data.category);
-            setSubCatData(res.data.subCategory);
             setLoading(false);
             setUpload(false);
         }).catch(err => {
@@ -150,9 +199,58 @@ export default function CompleteProfile({ navigation }) {
             alert('Something went wrong!');
         });
     }
+    const getSubCategory = async (catId) => {
+        setLoading(true);
+        setUpload(true);
+        await axios.get(api + 'getSubCategory?catId=' + catId).then(res => {
+            if (!res.data.subcategory) {
+                setSubCatData([]);
+                setLoading(false);
+                setUpload(false);
+            } else {
+                setSubCatData(res.data.subcategory);
+                setLoading(false);
+                setUpload(false);
+            }
+        }).catch(err => {
+            setLoading(false);
+            setUpload(false);
+            console.log(err);
+            alert('Something went wrong!');
+        });
+    }
+
+    const getQualification = async () => {
+        setLoading(true);
+        setUpload(true);
+        await axios.get(api + 'getQualification').then(res => {
+            setQData(res.data);
+            setUpload(false);
+            setLoading(false);
+        }).catch(err => {
+            console.log(err);
+            setUpload(false);
+            setLoading(false);
+        });
+    }
+    const getSubQualification = async (qId) => {
+        setUpload(true);
+        setLoading(true);
+        await axios.get(api + 'getSubQualification?qId=' + qId).then(res => {
+            setSubQData(res.data);
+            setUpload(false);
+            setLoading(false);
+        }).catch(err => {
+            console.log(err);
+            setUpload(false);
+            setLoading(false);
+        });
+    }
 
     useEffect(() => {
         getCategory();
+        getQualification();
+        getNull();
     }, []);
     return (
         <View style={styles.container}>
@@ -187,87 +285,144 @@ export default function CompleteProfile({ navigation }) {
                 animationType={'slide'}
                 transparent={true}
                 onRequestClose={() => setUpload(false)}>
-                    <ImageBackground source={require('../../../assets/Images/transparent.png')} style={[styles.justifyCenter, {flex: 1, width: '100%'}]} resizeMode='stretch' blurRadius={50}>
-                        {loading ? 
-                        <AnimatedLottieView source={Loading} autoPlay loop style={{ width: '20%', alignSelf: 'center'}} resizeMode="contain" /> :
-                        <View style={{marginHorizontal: '10%'}}>
-                        <Text style={[styles.h1, styles.bold, styles.text_center, {color: '#fff', marginBottom: '5%'}]}>Uploading Files</Text>
-                        <Progress.Bar progress={progress} width={null} color={color.white} borderColor={color.white} borderWidth={5} height={20} borderRadius={20} />
+                <ImageBackground source={require('../../../assets/Images/transparent.png')} style={[styles.justifyCenter, { flex: 1, width: '100%' }]} resizeMode='stretch' blurRadius={50}>
+                    {loading ?
+                        <AnimatedLottieView source={Loading} autoPlay loop style={{ width: '20%', alignSelf: 'center' }} resizeMode="contain" /> :
+                        <View style={{ marginHorizontal: '10%' }}>
+                            <Text style={[styles.h1, styles.bold, styles.text_center, { color: '#fff', marginBottom: '5%' }]}>Uploading Files</Text>
+                            <Progress.Bar progress={parseFloat(progress)} width={null} color={color.white} borderColor={color.white} borderWidth={5} height={20} borderRadius={20} />
                         </View>}
-                    </ImageBackground>
+                </ImageBackground>
             </Modal>
-            <ScrollView style={{ flex: 1, marginHorizontal: '5%' }} keyboardShouldPersistTaps={'handled'}>
-                <View style={[styles.row, { marginVertical: '10%', justifyContent: 'center' }]}>
-                    {image ?
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => setModalVisible(true)}>
-                            <Image source={{ uri: image.uri }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} />
-                        </TouchableOpacity> :
-                        <TouchableOpacity activeOpacity={0.7} style={{ borderWidth: 2, borderColor: color.red, borderRadius: 50, padding: '4%' }} onPress={() => setModalVisible(true)}>
-                            <Ionicons name="camera-sharp" size={30} color={color.red} />
-                        </TouchableOpacity>}
-                    <View style={{ marginLeft: 10 }}>
-                        <Text style={[styles.bold, { fontSize: 25, maxWidth: 300 }]}>Hi, {name}!</Text>
-                        <Text>Upload your profile photo</Text>
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={'handled'}>
+                <View style={{ paddingHorizontal: '5%' }}>
+                    <View style={[styles.row, styles.justifyCenter, { marginVertical: '10%' }]}>
+                        {image ?
+                            <TouchableOpacity activeOpacity={0.7} onPress={() => profile ? null : setModalVisible(true)}>
+                                <Image source={{ uri: image.uri }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} />
+                            </TouchableOpacity> :
+                            <TouchableOpacity activeOpacity={0.7} style={{ borderWidth: 2, borderColor: color.red, borderRadius: 50, padding: profile ? 0 : '4%' }} onPress={() => profile ? null : setModalVisible(true)}>
+                                {profile ? 
+                                <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + profile }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} /> :
+                                <Ionicons name="camera-sharp" size={30} color={color.red} />}
+                            </TouchableOpacity>}
+                        <View style={{ marginLeft: 10 }}>
+                            <Text style={[styles.bold, { fontSize: 25, maxWidth: 300 }]}>Hi, {name}!</Text>
+                            <Text>Upload your profile photo</Text>
+                        </View>
                     </View>
-                </View>
-                <View style={{ width: '100%' }}>
-                    <Text style={[styles.bold, { fontSize: 16 }]}>Profile Setup</Text>
-                    <Progress.Bar progress={0.3} width={null} color={color.red} borderColor={color.black} height={20} borderRadius={20} />
-                    <Text style={{ textAlign: 'right' }}>30% Completed</Text>
-                </View>
-                <View style={{ marginHorizontal: '2%' }}>
-                    <TextInput activeOpacity={0.7} style={[styles.pill, styles.shadow_sm]} placeholder={'Qualification'} placeholderTextColor={'#000'} onChangeText={(e) => setQualification(e)} />
-                    <Picker
-                        style={[styles.pill, styles.shadow_sm]}
-                        selectedValue={category}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setCategory(itemValue)
-                        }>
-                        {catData.map((item, index) => (
-                            <Picker.Item key={index} label={item.cat_name} value={item.id} />
-                        ))}
-                    </Picker>
-                    <Picker
-                        style={[styles.pill, styles.shadow_sm]}
-                        selectedValue={subCategory}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setSubCategory(itemValue)
-                        }>
-                        {subCatData.map((item, index) => (
-                            <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
-                        ))}
-                    </Picker>
-                </View>
-                <Text style={[styles.bold, { color: 'red', fontSize: 12 }]}>* Only PDF or Images are allowed</Text>
-                <View style={[styles.row, { marginHorizontal: '2%', justifyContent: 'space-between' }]}>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={pickResume}>
-                        <TouchableOpacity activeOpacity={0.7} style={{ borderColor: color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={pickResume}>
-                            <Feather name="file" size={24} color={color.red} />
+                    <View style={{paddingVertical: '2%'}}>
+                        <Text style={{fontSize: 12, fontWeight: '500'}}>Profile Setup</Text>
+                        <Progress.Bar progress={completed} width={null} height={20} color={color.red} borderRadius={30} />
+                        <Text style={{fontSize: 12, fontWeight: '500', textAlign: 'right'}}>{completed*100}% Completed</Text>
+                    </View>
+                    <View style={{ marginHorizontal: '2%' }}>
+                        <Text style={[styles.bold]}>Qualification</Text>
+                        <Picker
+                            style={[styles.pill, styles.shadow_sm]}
+                            selectedValue={qualification}
+                            onValueChange={(itemValue, itemIndex) => {
+                                setQualification(itemValue);
+                                getSubQualification(itemValue);
+                            }}>
+                            {qData.map((item, index) => (
+                                <Picker.Item key={index} value={item.id} label={item.title} />
+                            ))}
+                        </Picker>
+                        {subQData.length !== 0 && <Picker
+                            style={[styles.pill, styles.shadow_sm]}
+                            selectedValue={subQualification}
+                            onValueChange={(itemValue, itemIndex) => {
+                                setSubQualification(itemValue);
+                            }}>
+                            {subQData.map((item, index) => (
+                                <Picker.Item key={index} value={item.id} label={item.title} />
+                            ))}
+                        </Picker>}
+                        <Text style={[styles.bold, { marginTop: '4%' }]}>Category</Text>
+                        <Picker
+                            style={[styles.pill, styles.shadow_sm]}
+                            selectedValue={category}
+                            onValueChange={(itemValue, itemIndex) => {
+                                setCategory(itemValue);
+                                getSubCategory(itemValue);
+                            }}>
+                            {catData.map((item, index) => (
+                                <Picker.Item key={index} label={item.cat_name} value={item.id} />
+                            ))}
+                        </Picker>
+                        {subCatData.length !== 0 &&
+                            <><Text style={[styles.bold]}>Sub Category</Text>
+                                <Picker
+                                    style={[styles.pill, styles.shadow_sm]}
+                                    selectedValue={subCategory}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        setSubCategory(itemValue)
+                                    }>
+                                    {subCatData.map((item, index) => (
+                                        <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
+                                    ))}
+                                </Picker>
+                            </>}
+                        <Text style={[styles.bold, { marginTop: '4%' }]}>Do You have any work experience?</Text>
+                        <View style={[styles.row]}>
+                            <RadioButton
+                                value='yes'
+                                color={color.red}
+                                status={haveExperience === 'yes' ? 'checked' : 'unchecked'}
+                                onPress={() => setHaveExperience('yes')} />
+                            <Text>Yes</Text>
+                        </View>
+                        <View style={[styles.row]}>
+                            <RadioButton
+                                value='no'
+                                color={color.red}
+                                status={haveExperience === 'no' ? 'checked' : 'unchecked'}
+                                onPress={() => setHaveExperience('no')} />
+                            <Text>No</Text>
+                        </View>
+                        {haveExperience === 'yes' &&
+                            <View>
+                                <Text>How many years of experience you have?</Text>
+                                <Picker
+                                    style={[styles.pill, styles.shadow_sm]}
+                                    selectedValue={yearsOfExp}
+                                    mode='dropdown'
+                                    onValueChange={(itemValue, itemIndex) => 
+                                        setYearsOfExp(itemValue)
+                                    }>
+                                    <Picker.Item value={1} label='1 Year' />
+                                    <Picker.Item value={2} label='2 Years' />
+                                    <Picker.Item value={3} label='3 Years' />
+                                    <Picker.Item value={4} label='4 or More Years' />
+                                </Picker>
+                            </View>}
+                    </View>
+                    <Text style={[styles.bold, { color: 'red', fontSize: 12 }]}>* Only PDF or Images are allowed</Text>
+                    <View style={[styles.row, styles.justifyAround, { marginHorizontal: '2%' }]}>
+                        <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={downloadResume ? null : pickResume}>
+                            <TouchableOpacity activeOpacity={0.7} style={{ borderColor: downloadResume ? 'green' : color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={downloadResume ? null : pickResume}>
+                                <Feather name={downloadResume ? "check" : "file"} size={24} color={downloadResume ? 'green' : color.red} />
+                            </TouchableOpacity>
+                            <Text style={[styles.text_center, { fontSize: 12, width: '80%' }]}>{resume ? resume.name : downloadResume ? downloadResume : 'Upload\nResume'}</Text>
                         </TouchableOpacity>
-                        <Text style={[styles.text_center, { fontSize: 12 }]}>{resume ? resume.name : 'Upload\nResume'}</Text>
+                        {haveExperience === 'yes' && <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={downloadExp ? null : pickExperience}>
+                            <TouchableOpacity activeOpacity={0.7} style={{ borderColor: downloadExp ? 'green' : color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={downloadExp ? null : pickExperience}>
+                                <Feather name={downloadExp ? "check" : "file"} size={24} color={downloadExp ? 'green' : color.red} />
+                            </TouchableOpacity>
+                            <Text style={[styles.text_center, { fontSize: 12, width: '80%' }]}>{experience ? experience.name : downloadExp ? downloadExp : 'Upload\nExperience'}</Text>
+                        </TouchableOpacity>}
+                    </View>
+                    <TouchableOpacity activeOpacity={0.7} style={[styles.welcome_btn, styles.shadow_sm, { borderRadius: 40, paddingVertical: '3%', marginTop: '5%' }]} onPress={sumbitData}>
+                        <Text style={[styles.bold, styles.text_center, { fontSize: 16, color: '#fff' }]}>Upload</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={pickExperience}>
-                        <TouchableOpacity activeOpacity={0.7} style={{ borderColor: color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={pickExperience}>
-                            <Feather name="file" size={24} color={color.red} />
-                        </TouchableOpacity>
-                        <Text style={[styles.text_center, { fontSize: 12 }]}>{experience ? experience.name : 'Upload\nExperience'}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={pickDocument}>
-                        <TouchableOpacity activeOpacity={0.7} style={{ borderColor: color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={pickDocument}>
-                            <Feather name="file" size={24} color={color.red} />
-                        </TouchableOpacity>
-                        <Text style={[styles.text_center, { fontSize: 12 }]}>{document ? document.name : 'Upload\nDocument'}</Text>
+                    <TouchableOpacity activeOpacity={0.7} style={[styles.btn_outline, styles.shadow_sm, { borderRadius: 40, paddingVertical: '3%', marginVertical: '5%' }]} onPress={() => {
+                        dispatch(completedProfile({ isProfileCompleted: 0 }));
+                        navigation.navigate('HomeTab');
+                    }}>
+                        <Text style={[styles.bold, styles.text_center, { fontSize: 16, color: color.red }]}>Skip</Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity activeOpacity={0.7} style={[styles.welcome_btn, styles.shadow_sm, { borderRadius: 40, paddingVertical: '3%', marginTop: '5%' }]} onPress={sumbitData}>
-                    <Text style={[styles.bold, styles.text_center, { fontSize: 16, color: '#fff' }]}>Upload</Text>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7} style={[styles.btn_outline, styles.shadow_sm, { borderRadius: 40, paddingVertical: '3%', marginVertical: '5%' }]} onPress={() => {
-                    dispatch(completedProfile({isProfileCompleted: 0}));
-                    navigation.navigate('HomeTab');
-                }}>
-                    <Text style={[styles.bold, styles.text_center, { fontSize: 16, color: color.red }]}>Skip</Text>
-                </TouchableOpacity>
             </ScrollView>
             <View style={{ position: 'absolute', top: '-25%', right: '-20%' }}>
                 <Image source={require('../../../assets/Images/circle.png')} style={{ zIndex: -1 }} />

@@ -77,7 +77,6 @@ export default function Signup({ route, navigation }) {
          } else {
             setSponsorData(res.data);
          }
-         console.log(res.data);
       }).catch(err => {
          console.log(err);
       });

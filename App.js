@@ -27,6 +27,8 @@ import Support from './src/screens/Emplyee/Support';
 import EditProfile from './src/screens/Emplyee/EditProfile';
 import AppliedJobs from './src/screens/Emplyee/AppliedJobs';
 import Tickets from './src/screens/Emplyee/Tickets';
+import Guest from './src/screens/Emplyee/Guest';
+import Documents from './src/screens/Emplyee/Documents';
 
 /**** Provider Screens ****/
 import ProviderLogin from './src/screens/Provider/ProviderLogin';
@@ -105,6 +107,8 @@ export default function App() {
           <Stack.Screen name='EditProfile' component={EditProfile} />
           <Stack.Screen name='AppliedJobs' component={AppliedJobs} />
           <Stack.Screen name='Tickets' component={Tickets} />
+          <Stack.Screen name='Guest' component={Guest} />
+          <Stack.Screen name='Documents' component={Documents} />
           <Stack.Screen name='NoNetwork' component={NoNetwork} />
           <Stack.Screen name='HomeTab' component={HomeTab} />
           {/**** Provider Routes ****/}

@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, BackHandler, Alert } from 'react-native';
-import { useSelector } from 'react-redux';
 import axios from 'axios';
 import AnimatedLottieView from 'lottie-react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import styles from '../../config/styles';
 import { api, color } from '../../config/config';
-import { selectName, selectIsActive, selectIsProfileCompleted } from '../../redux/slice/authSlice';
 import { Loading } from '../../components/lottie';
 
-export default function Home({ navigation }) {
-    const name = useSelector(selectName);
-    const isActive = useSelector(selectIsActive);
-    const profileStatus = useSelector(selectIsProfileCompleted);
+export default function Guest({ navigation }) {
 
     const [jobData, setJobData] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const getJobs = async () => {
+    const getJobs = () => {
         setLoading(true);
-        await axios.get(api + 'getAllJobs').then(res => {
+        axios.get(api + 'getAllJobs').then(res => {
             setJobData(res.data.jobs);
             setTimeout(() => {
                 setLoading(false);
@@ -30,22 +25,6 @@ export default function Home({ navigation }) {
             setLoading(false);
         });
     }
-
-    const handleBackPress = () => {
-        if (!navigation.isFocused()) {
-            return false;
-        } else {
-            Alert.alert('Exit!', 'Are you sure you want to Exit?', [
-                {
-                    text: 'Cancel',
-                    onPress: () => null,
-                    style: 'cancel',
-                },
-                { text: 'YES', onPress: () => BackHandler.exitApp() },
-            ]);
-            return true;
-        }
-    };
 
     const screen = () => {
         if (loading) {
@@ -82,30 +61,11 @@ export default function Home({ navigation }) {
     }
     useEffect(() => {
         getJobs();
-
-        if (profileStatus == 0) {
-            navigation.navigate('CompleteProfile');
-        }
-
-        BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-
-        return () => {
-            BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-        }
     }, []);
     return (
         <View style={styles.container}>
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
                 <View style={{ paddingHorizontal: '5%' }}>
-                    <Text style={[styles.h1, styles.bold, { marginVertical: '5%' }]}>Welcome {name}</Text>
-                    {isActive == 1 ?
-                        <Text style={[styles.bold, { color: 'green' }]}>Your Account is active</Text> :
-                        <>
-                            <Text style={[styles.bold, { color: 'red' }]}>Your Account is not active</Text>
-                            <TouchableOpacity style={styles.btn_sm} onPress={() => navigation.navigate('ActivateId')}>
-                                <Text style={[styles.text_center, { color: '#fff' }]}>Activate Now</Text>
-                            </TouchableOpacity>
-                        </>}
                     <Image source={require('../../../assets/Images/Banner.png')} style={{ width: '100%', resizeMode: 'contain', alignSelf: 'center' }} />
 
                     <View>
@@ -114,6 +74,14 @@ export default function Home({ navigation }) {
                     </View>
                 </View>
             </ScrollView>
+            <View style={[styles.row, styles.justifyAround, {paddingVertical: '2%'}]}>
+                <TouchableOpacity style={[styles.btn_sm, styles.shadow_sm, {width: '48%'}]} onPress={() => navigation.navigate('Login')}>
+                    <Text style={[styles.bold, styles.text_center, {color: '#fff'}]}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.btn_sm, styles.shadow_sm, {width: '48%'}]} onPress={() => navigation.navigate('Signup')}>
+                    <Text style={[styles.bold, styles.text_center, {color: '#fff'}]}>Signup</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }

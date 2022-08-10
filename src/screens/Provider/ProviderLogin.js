@@ -31,12 +31,6 @@ export default function ProviderLogin({ route, navigation }) {
         await axios.post(api + 'login', {
             "userId": userId, "password": password, "role": "2"
         }).then(res => {
-            if (res.status === 400) {
-                setLoading(false);
-                alert('Invalid Details');
-                return;
-            }
-
             if (res.status === 200) {
                 setLoginSuccess(true);
                 const data = res.data.user;
@@ -61,6 +55,9 @@ export default function ProviderLogin({ route, navigation }) {
             console.log(err);
             if (err.toString().endsWith('400')) {
                 alert('Invalid Details');
+            }
+            if(err.toString().endsWith('405')){
+                Alert.alert('Sorry', "You can't Login to your account, because we disabled your account for some reasons.");
             }
         })
     }

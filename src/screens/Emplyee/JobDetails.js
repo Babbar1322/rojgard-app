@@ -37,16 +37,15 @@ export default function JobDetails({ route, navigation }) {
             userId: userId, jobId: route.params.id
         }).then(res => {
             setLoading(false);
-            if(res.status === 200){
-                console.log(res.data);
+            if (res.status === 200) {
                 setApplied(true);
             }
         }).catch(err => {
             setLoading(false);
-            if(err.toString().endsWith('400')){
+            if (err.toString().endsWith('400')) {
                 return Alert.alert('Sorry', 'Your Profile is not completed yet!');
             }
-            if(err.toString().endsWith('405')){
+            if (err.toString().endsWith('405')) {
                 return Alert.alert('Sorry', 'You have already applied for this job!');
             }
             console.log(err);
@@ -61,39 +60,48 @@ export default function JobDetails({ route, navigation }) {
             )
         } else {
             return (
-                applied ? 
-                <>
-                    <AnimatedLottieView source={success} autoPlay loop={false} style={{ flex: 1, width: '50%', alignSelf: 'center', marginTop: '30%' }} />
-                    <Text style={[styles.bold, styles.text_center, {color: 'green', marginTop: '10%'}]}>Applied For Job Successfully</Text>
-                </> :
-                <View>
-                    <View style={[styles.row, styles.shadow_sm, styles.detailsView]}>
-                        <Image source={{ uri: 'https://rojgar.biz/'+data.image }} style={{ width: 100, height: 100, resizeMode: 'contain', borderRadius: 10 }} />
-                        <View style={{ marginLeft: '5%' }}>
-                            <Text style={[styles.bold, styles.h1, {maxWidth: '80%'}]}>{data.title}</Text>
-                            <Text style={[styles.bold, {maxWidth: '100%'}]}>Offered by: {data.provider[0].name}</Text>
-                            <Text style={[styles.bold]}>{data.location}</Text>
+                applied ?
+                    <>
+                        <AnimatedLottieView source={success} autoPlay loop={false} style={{ flex: 1, width: '50%', alignSelf: 'center', marginTop: '30%' }} />
+                        <Text style={[styles.bold, styles.text_center, { color: 'green', marginTop: '10%' }]}>Applied For Job Successfully</Text>
+                    </> :
+                    <View>
+                        <View style={[styles.row, styles.shadow_sm, styles.detailsView]}>
+                            <Image source={{ uri: 'https://rojgar.biz/' + data.image }} style={{ width: 100, height: 100, resizeMode: 'contain', borderRadius: 10 }} />
+                            <View style={{ marginLeft: '5%' }}>
+                                <Text style={[styles.bold, styles.h1, { maxWidth: '80%' }]}>{data.title}</Text>
+                                <Text style={[styles.bold, { maxWidth: '100%' }]}>Offered by: {data.provider[0].name}</Text>
+                                <Text style={[styles.bold]}>{data.location}</Text>
+                            </View>
                         </View>
+                        <View style={[styles.shadow_sm, styles.detailsView]}>
+                            <Text style={[styles.bold]}>Vacancies: {data.employees} Employees</Text>
+                            <Text style={[styles.bold]}>Salary: {data.min_salary}-{data.max_salary} per month</Text>
+                            <Text style={[styles.bold]}>Job Location: {data.location}</Text>
+                        </View>
+                        <View style={[styles.shadow_sm, styles.detailsView]}>
+                            <Text style={[styles.bold]}>Brief:</Text>
+                            <Text style={[]}>{data.description}</Text>
+                        </View>
+                        {userId === null ?
+                            <View style={[styles.row, styles.justifyAround, { paddingVertical: '2%' }]}>
+                                <TouchableOpacity style={[styles.btn_sm, styles.shadow_sm, { width: '48%' }]} onPress={() => navigation.navigate('Login')}>
+                                    <Text style={[styles.bold, styles.text_center, { color: '#fff' }]}>Login</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.btn_sm, styles.shadow_sm, { width: '48%' }]} onPress={() => navigation.navigate('Signup')}>
+                                    <Text style={[styles.bold, styles.text_center, { color: '#fff' }]}>Signup</Text>
+                                </TouchableOpacity>
+                            </View> :
+                            <TouchableOpacity style={[styles.btn, { alignSelf: 'center', paddingHorizontal: '5%', marginVertical: '5%' }]} activeOpacity={0.5} onPress={apply}>
+                                <Text style={[styles.bold, styles.text_center, { color: '#fff' }]}>Apply Now</Text>
+                            </TouchableOpacity>}
                     </View>
-                    <View style={[styles.shadow_sm, styles.detailsView]}>
-                        <Text style={[styles.bold]}>Vacancies: {data.employees} Employees</Text>
-                        <Text style={[styles.bold]}>Salary: {data.min_salary}-{data.max_salary} per month</Text>
-                        <Text style={[styles.bold]}>Job Location: {data.location}</Text>
-                    </View>
-                    <View style={[styles.shadow_sm, styles.detailsView]}>
-                        <Text style={[styles.bold]}>Brief:</Text>
-                        <Text style={[]}>{data.description}</Text>
-                    </View>
-                    <TouchableOpacity style={[styles.btn, {alignSelf: 'center', paddingHorizontal: '5%', marginVertical: '5%'}]} activeOpacity={0.5} onPress={apply}>
-                        <Text style={[styles.bold, styles.text_center, {color: '#fff'}]}>Apply Now</Text>
-                    </TouchableOpacity>
-                </View>
             )
         }
     }
 
     useEffect(() => {
-        if(route.params){
+        if (route.params) {
             setJobId(route.params.id);
         }
         getJob();

@@ -18,7 +18,7 @@ export default function Refer() {
                 <Text style={[styles.bold, styles.text_center, {fontSize: 16}]}>Refer</Text>
                 <Image source={ReferVector} style={{width: '100%', height: '65%', resizeMode: 'contain'}} />
                 <View style={{paddingHorizontal: '5%'}}>
-                    <Text style={[styles.h1, styles.bold, {maxWidth: '70%', fontSize: 25}]}>Refer Rojgar to your friends & help them in finding jobs.</Text>
+                    <Text style={[styles.h1, styles.bold, {maxWidth: '80%', fontSize: 25}]}>Refer Rojgar to your friends & help them in finding jobs.</Text>
                 </View>
                 <TouchableOpacity style={[styles.btn, {alignSelf: 'center', paddingHorizontal: '20%', marginVertical: '5%'}]} onPress={share}>
                     <Text style={[styles.bold, styles.text_center, {color: '#fff'}]}>Refer Now</Text>

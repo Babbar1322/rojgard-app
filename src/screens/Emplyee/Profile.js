@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, ScrollView, ImageBackground, Image, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import * as Progress from 'react-native-progress';
 
 import styles from '../../config/styles';
 import profileBackground from '../../../assets/Images/profileBackground.png';
@@ -12,6 +13,7 @@ import { selectEmail, selectName, selectPhone, selectProfilePhoto, selectProfile
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function Profile({ navigation }) {
+    const progress = useSelector(selectProfileStatus);
     const dispatch = useDispatch();
     const name = useSelector(selectName);
     const userId = useSelector(selectUserId);
@@ -45,8 +47,14 @@ export default function Profile({ navigation }) {
         axios.get(api + 'userInfo/' + userId).then(res => {
             const newData = res.data[0];
             let image = null;
-            if(newData.dp !== null){
+            let resume = null;
+            let experience = null;
+            let exp = null;
+            if (newData.dp !== null) {
                 image = newData.dp.profile_photo;
+                resume = newData.dp.resume;
+                experience = newData.dp.experience;
+                exp = newData.dp.yearsOfExp;
             }
             const state = {
                 isLoggedIn: true,
@@ -59,6 +67,9 @@ export default function Profile({ navigation }) {
                 profileStatus: newData.profileStatus,
                 isProfileCompleted: newData.profileStatus,
                 profilePhoto: image,
+                resume: resume,
+                experience: experience,
+                exp: exp
             }
             dispatch(setLogin(state));
         }).catch(err => {
@@ -68,54 +79,54 @@ export default function Profile({ navigation }) {
     return (
         <View style={styles.container}>
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-                <ImageBackground source={profileBackground} style={{
-                    width: '100%',
-                    alignItems: 'center'
-                }}>
-                    {profileStatus == 1 ? 
-                    <Image source={{uri: 'https://rojgar.biz/' + profileImage}} style={[styles.image, {borderColor: '#fff'}]} />:
-                    <Image source={{ uri: 'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg' }} style={[styles.image, {borderColor: '#fff'}]} />}
-                    <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginBottom: '10%' }]}>{name}</Text>
+                <ImageBackground source={profileBackground} style={[styles.row, {
+                    height: 300, paddingHorizontal: '5%'
+                }]}>
+                    {profileImage !== null ?
+                        <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + profileImage }} style={[styles.image, { borderColor: '#fff' }]} /> :
+                        <Image source={{ uri: 'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg' }} style={[styles.image, { borderColor: '#fff' }]} />}
+                    <View style={{ marginLeft: '5%', maxWidth: '60%' }}>
+                        <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginBottom: '5%' }]}>{name}</Text>
+                        <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginBottom: '5%' }]}>#{userId}</Text>
+                        <Text style={[styles.bold, { color: '#fff', marginBottom: '5%' }]}>{email}</Text>
+                        <Text style={[styles.bold, { color: '#fff', marginBottom: '5%' }]}>{phone}</Text>
+                    </View>
                 </ImageBackground>
                 <View style={{ paddingHorizontal: '5%', marginTop: '5%' }}>
-                    {profileStatus == 0 ? 
-                    <TouchableOpacity style={[styles.btn, {marginVertical: '5%'}]} onPress={() => navigation.navigate('CompleteProfile')}>
-                        <Text style={[styles.bold, styles.text_center, {color: '#fff'}]}>Complete Your Profile</Text>
-                    </TouchableOpacity> : null}
-                    <View style={[styles.row, { marginVertical: '2%' }]}>
-                        <Ionicons name='person' color={color.red} size={30} />
-                        <Text style={[styles.bold, { marginLeft: '3%', fontSize: 16 }]}>{userId}</Text>
+                    <View style={{paddingVertical: '2%'}}>
+                        <Text style={{fontSize: 12, fontWeight: '500'}}>Profile Setup</Text>
+                        <Progress.Bar progress={parseFloat(progress)} width={null} height={20} color={color.red} borderRadius={30} />
+                        <Text style={{fontSize: 12, fontWeight: '500', textAlign: 'right'}}>{progress*100}% Completed</Text>
                     </View>
-                    <View style={[styles.row, { marginVertical: '2%' }]}>
-                        <Ionicons name='mail' color={color.red} size={30} />
-                        <Text style={[styles.bold, { marginLeft: '3%', fontSize: 16 }]}>{email}</Text>
-                    </View>
-                    <View style={[styles.row, { marginVertical: '2%' }]}>
-                        <Ionicons name='call' color={color.red} size={30} />
-                        <Text style={[styles.bold, { marginLeft: '3%', fontSize: 16 }]}>{phone}</Text>
-                    </View>
-                    <TouchableOpacity
-                        style={[styles.btn, styles.shadow_sm,
-                        { marginVertical: '2%', backgroundColor: '#fff', borderWidth: 2, borderColor: color.red }]}
-                        activeOpacity={0.5}
+                    {profileStatus == 1 ? null : <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
+                        onPress={() => navigation.navigate('CompleteProfile')}>
+                        <MaterialCommunityIcons name="account-check-outline" size={30} color={color.red} />
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>Complete Profile</Text>
+                    </TouchableOpacity>}
+                    <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
+                        onPress={() => navigation.navigate('Documents')}>
+                        <MaterialCommunityIcons name="file-document-multiple-outline" size={30} color={color.red} />
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>My Documents</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
                         onPress={() => navigation.navigate('AppliedJobs')}>
-                        <Text style={[styles.bold, styles.text_center, { color: color.red }]}>Applied Jobs</Text>
+                        <MaterialCommunityIcons name="briefcase-account-outline" size={30} color={color.red} />
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>My Jobs</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.btn, styles.shadow_sm, { marginVertical: '2%' }]} activeOpacity={0.5} onPress={() => navigation.navigate('EditProfile')}>
-                        <Text style={[styles.bold, styles.text_center, { color: '#fff' }]}>Edit Profile</Text>
+                    <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
+                        onPress={() => navigation.navigate('EditProfile')}>
+                        <MaterialCommunityIcons name="pencil-outline" size={30} color={color.red} />
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>Edit Profile</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.btn, styles.shadow_sm,
-                        { marginVertical: '2%', backgroundColor: '#fff', borderWidth: 2, borderColor: color.red }]}
-                        activeOpacity={0.5}
+                    <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
                         onPress={logout}>
-                        <Text style={[styles.bold, styles.text_center, { color: color.red }]}>Logout</Text>
+                        <MaterialCommunityIcons name="logout" size={30} color={color.red} />
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>Logout</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.btn, styles.shadow_sm, { marginVertical: '2%' }]}
-                        activeOpacity={0.5}
+                    <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
                         onPress={() => navigation.navigate('Tickets')}>
-                        <Text style={[styles.bold, styles.text_center, { color: color.white }]}>Raise a ticket</Text>
+                        <MaterialCommunityIcons name="alert-circle-outline" size={30} color={color.red} />
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>Raise a ticket</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

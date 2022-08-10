@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
         borderWidth: 2
     },
     image: {
-        width: 200,
-        height: 200,
+        width: 170,
+        height: 170,
         resizeMode: 'contain',
         borderRadius: 300,
         borderWidth: 2,
