@@ -10,7 +10,7 @@ import styles from '../../config/styles';
 import AnimatedLottieView from 'lottie-react-native';
 import { Loading, noData } from '../../components/lottie';
 
-export default function AddedJobs({navigation}) {
+export default function AddedJobs({ navigation }) {
     const userId = useSelector(selectUserId);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -46,12 +46,13 @@ export default function AddedJobs({navigation}) {
                             <Image source={{ uri: 'https://rojgar.biz/' + item.image }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 10 }} />
                             <View style={{ width: '50%' }}>
                                 <Text numberOfLines={1} style={[styles.bold, { fontSize: 16 }]}>{item.title}</Text>
-                                <View style={[styles.row, { justifyContent: 'space-between' }]}>
-                                    <View style={styles.row}>
-                                        <Ionicons name="location-sharp" size={16} color={color.red} />
-                                        <Text>{item.location}</Text>
-                                    </View>
+                                <View style={styles.row}>
+                                    <Ionicons name="location-sharp" size={16} color={color.red} />
+                                    <Text>{item.location}</Text>
                                 </View>
+                                { item.status == 0 && <Text style={{color: 'blue'}}>In Review</Text>}
+                                { item.status == 1 && <Text style={{color: 'green'}}>Listed</Text>}
+                                { item.status == -1 && <Text style={{color: 'red'}}>Rejected</Text>}
                             </View>
                             <View>
                                 <Text style={[styles.bold, { fontSize: 12, textAlign: 'right' }]}>Min - {item.min_salary}</Text>

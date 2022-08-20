@@ -95,9 +95,14 @@ export default function Home({ navigation }) {
     }, []);
     return (
         <View style={styles.container}>
+            <View style={[styles.row, styles.justifyBetween, {paddingHorizontal: '5%', marginVertical: '7%'}]}>
+                <Text style={[styles.h1, styles.bold]}>Welcome {name}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+                    <Ionicons name='notifications' size={28} color={color.red} />
+                </TouchableOpacity>
+            </View>
             <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
                 <View style={{ paddingHorizontal: '5%' }}>
-                    <Text style={[styles.h1, styles.bold, { marginVertical: '5%' }]}>Welcome {name}</Text>
                     {isActive == 1 ?
                         <Text style={[styles.bold, { color: 'green' }]}>Your Account is active</Text> :
                         <>

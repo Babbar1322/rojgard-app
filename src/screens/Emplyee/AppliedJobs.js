@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AnimatedLottieView from 'lottie-react-native';
 import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, ScrollView, Modal, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -20,28 +20,30 @@ export default function AppliedJobs({ navigation }) {
         setLoading(true);
         await axios.get(api + 'userAppliedJobs/' + userId).then(res => {
             setData(res.data);
-            setLoading(false);
         }).catch(err => {
             console.log(err);
-            setLoading(false);
         });
+        setLoading(false);
     }
-    useLayoutEffect(() => {
-        getAppliedJobs();
-    }, []);
-    return (
-        <View style={styles.container}>
-            <View style={[styles.row, { paddingVertical: '4%', paddingHorizontal: '5%' }]}>
-                <Ionicons name='chevron-back' size={35} color={'black'} onPress={() => navigation.goBack()} />
-                <Text style={[styles.bold, styles.text_center, { fontSize: 16 }]} onPress={() => navigation.goBack()}>Applied Jobs</Text>
-            </View>
-            <Modal style={{ flex: 1 }} visible={loading} animationType="slide" transparent>
-                <View style={[styles.justifyCenter, { backgroundColor: '#00000050', flex: 1 }]}>
-                    <AnimatedLottieView source={Loading} autoPlay loop style={{ width: '20%', alignSelf: 'center' }} />
-                </View>
-            </Modal>
-            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
-                <View style={{paddingHorizontal: '5%'}}>
+    
+    const search = async (data) => {
+        setLoading(true);
+        await axios.get(api + 'searchAppliedJobs/?userId='+userId+'&data='+data).then(res => {
+            console.log(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+        setLoading(false);
+    }
+
+    const screen = () => {
+        if(loading){
+            return(
+                <AnimatedLottieView source={Loading} autoPlay loop style={{flex: 1, width: '30%', alignSelf: 'center', marginTop: '30%'}} />
+            )
+        } else {
+            return(
+                <>
                     {data.map((item,  index) => (
                         <TouchableOpacity key={index} style={[styles.shadow_sm, { backgroundColor: '#fff', marginVertical: '2%', borderRadius: 10 }]}>
                         <View style={[styles.row, { paddingVertical: '2%', paddingHorizontal: '2%', justifyContent: 'space-between' }]}>
@@ -49,12 +51,13 @@ export default function AppliedJobs({ navigation }) {
                             <View style={{width: '50%'}}>
                                 <Text numberOfLines={1} style={[styles.bold, { fontSize: 16 }]}>{item.job.title}</Text>
                                 <Text numberOfLines={1} style={{ fontSize: 16 }}>{item.provider.name}</Text>
-                                <View style={[styles.row, { justifyContent: 'space-between' }]}>
-                                    <View style={styles.row}>
-                                        <Ionicons name="location-sharp" size={16} color={color.red} />
-                                        <Text>{item.job.location}</Text>
-                                    </View>
+                                <View style={styles.row}>
+                                    <Ionicons name="location-sharp" size={16} color={color.red} />
+                                    <Text>{item.job.location}</Text>
                                 </View>
+                                {item.status == 'Accepted' && <Text style={{color: 'green'}}>Approved</Text>}
+                                {item.status == 'Rejected' && <Text style={{color: 'red'}}>Rejected</Text>}
+                                {item.status == 'Pending' && <Text style={{color: 'blue'}}>Pending</Text>}
                             </View>
                             <View>
                                 <Text style={[styles.bold, { fontSize: 12, textAlign: 'right' }]}>Min - {item.job.min_salary}</Text>
@@ -64,8 +67,26 @@ export default function AppliedJobs({ navigation }) {
                         </View>
                     </TouchableOpacity>
                     ))}
-                    {data.length === 0 ? 
+                    {data.length === 0 && !loading ? 
                     <AnimatedLottieView source={noData} autoPlay loop style={{flex: 1, alignSelf: 'center', width: '90%', marginTop: '20%'}} /> : null}
+                    </>
+            )
+        }
+    }
+
+    useLayoutEffect(() => {
+        getAppliedJobs();
+    }, []);
+    return (
+        <View style={styles.container}>
+            <View style={[styles.row, { paddingVertical: '4%', paddingHorizontal: '5%' }]}>
+                <Ionicons name='chevron-back' size={35} color={'black'} onPress={() => navigation.goBack()} />
+                <Text style={[styles.bold, styles.text_center, { fontSize: 16 }]} onPress={() => navigation.goBack()}>Applied Jobs</Text>
+            </View>
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
+            <View style={{paddingHorizontal: '5%'}}>
+                <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Search' onChangeText={search} />
+                {screen()}
                 </View>
             </ScrollView>
         </View>

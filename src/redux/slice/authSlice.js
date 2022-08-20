@@ -15,7 +15,8 @@ const initialState = {
     profilePhoto: null,
     resume: null,
     experience: null,
-    exp: null
+    exp: null,
+    expoPushToken: null
 }
 
 const authSlice = createSlice({
@@ -37,6 +38,7 @@ const authSlice = createSlice({
             state.resume = action.payload.resume;
             state.experience = action.payload.experience;
             state.exp = action.payload.exp;
+            state.expoPushToken = action.payload.expoPushToken;
         },
         setLogout: (state) => {
             state.email = null;
@@ -53,18 +55,22 @@ const authSlice = createSlice({
             state.resume = null;
             state.experience = null;
             state.exp = null;
+            state.expoPushToken = null;
         },
         completedProfile: (state, action) => {
             state.isProfileCompleted = action.payload.isProfileCompleted;
         },
         setIsActive: (state, action) => {
             state.isActive = action.payload.isActive;
+        },
+        setExpoPushToken: (state, action) => {
+            state.expoPushToken = action.payload.expoPushToken;
         }
     }
 });
 
 
-export const { setLogin, setLogout, completedProfile, setIsActive } = authSlice.actions;
+export const { setLogin, setLogout, completedProfile, setIsActive, setExpoPushToken } = authSlice.actions;
 
 export const selectIsLoggedIn = (state) => state.userAuth.isLoggedIn;
 export const selectEmail = (state) => state.userAuth.email;
@@ -77,5 +83,6 @@ export const selectIsActive = (state) => state.userAuth.isActive;
 export const selectProfileStatus = (state) => state.userAuth.profileStatus;
 export const selectIsProfileCompleted = (state) => state.userAuth.isProfileCompleted;
 export const selectProfilePhoto = (state) => state.userAuth.profilePhoto;
+export const selectExpoPushToken = (state) => state.userAuth.expoPushToken;
 
 export default authSlice.reducer;

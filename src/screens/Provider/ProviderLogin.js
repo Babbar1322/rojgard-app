@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StatusBar, Image, TextInput, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AnimatedLottieView from 'lottie-react-native';
@@ -13,6 +13,7 @@ import { setLogin } from '../../redux/slice/authSlice';
 
 export default function ProviderLogin({ route, navigation }) {
     const dispatch = useDispatch();
+    const [pushToken, setPushToken] = useState(null);
 
     const [userId, setUserId] = useState("");
     const [password, setPassword] = useState("");
@@ -29,7 +30,7 @@ export default function ProviderLogin({ route, navigation }) {
         };
 
         await axios.post(api + 'login', {
-            "userId": userId, "password": password, "role": "2"
+            "userId": userId, "password": password, "role": "2", token: pushToken
         }).then(res => {
             if (res.status === 200) {
                 setLoginSuccess(true);
@@ -80,6 +81,14 @@ export default function ProviderLogin({ route, navigation }) {
             )
         }
     }
+
+    useEffect(() => {
+        async function setToken(){
+            const token = await AsyncStorage.getItem('pushToken');
+            setPushToken(token);
+        };
+        setToken();
+    }, []);
     return (
         <View style={[styles.container]}>
             <Image source={Logo} style={[styles.logo, { alignSelf: 'center' }]} />

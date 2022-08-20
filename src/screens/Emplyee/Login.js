@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StatusBar, Image, TextInput, TouchableOpacity, ScrollView, Keyboard, Alert } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, Keyboard, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AnimatedLottieView from 'lottie-react-native';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import Logo from '../../../assets/Logo.png';
 import { color, api } from '../../config/config';
 import { Loading, success } from '../../components/lottie';
 import { setLogin } from '../../redux/slice/authSlice';
+import { useEffect } from 'react';
 
 export default function Login({ route, navigation }) {
     const dispatch = useDispatch();
@@ -20,6 +21,8 @@ export default function Login({ route, navigation }) {
     const [loading, setLoading] = useState(false);
     const [loginSuccess, setloginSuccess] = useState(false);
 
+    const [pushToken, setPushToken] = useState(null);
+
     const onLogin = async () => {
         setLoading(true);
         Keyboard.dismiss();
@@ -29,7 +32,7 @@ export default function Login({ route, navigation }) {
         };
 
         await axios.post(api + 'login', {
-            "userId": userId, "password": password, "role": "1"
+            "userId": userId, "password": password, "role": "1", token: pushToken
         }).then(res => {
             if (res.status === 200) {
                 setloginSuccess(true);
@@ -93,6 +96,14 @@ export default function Login({ route, navigation }) {
             )
         }
     }
+    
+    useEffect(() => {
+        async function setToken(){
+            const token = await AsyncStorage.getItem('pushToken');
+            setPushToken(token);
+        };
+        setToken();
+    }, []);
     return (
         <View style={[styles.container]}>
             <Image source={Logo} style={[styles.logo, { alignSelf: 'center' }]} />

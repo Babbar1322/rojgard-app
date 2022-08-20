@@ -28,19 +28,19 @@ export default function CompleteProfile({ navigation }) {
     const [qData, setQData] = useState([]);
     const [subQData, setSubQData] = useState([]);
 
-    const [image, setImage] = useState(null);
-    const [qualification, setQualification] = useState(null);
-    const [subQualification, setSubQualification] = useState(null);
-    const [category, setCategory] = useState(null);
-    const [subCategory, setSubCategory] = useState(null);
-    const [resume, setResume] = useState(null);
-    const [experience, setExperience] = useState(null);
-    const [profile, setProfile] = useState(null);
-    const [downloadExp, setDownloadExp] = useState(null);
-    const [downloadResume, setDownloadResume] = useState(null);
+    const [image, setImage] = useState("");
+    const [qualification, setQualification] = useState("");
+    const [subQualification, setSubQualification] = useState("");
+    const [category, setCategory] = useState("");
+    const [subCategory, setSubCategory] = useState("");
+    const [resume, setResume] = useState("");
+    const [experience, setExperience] = useState("");
+    const [profile, setProfile] = useState("");
+    const [downloadExp, setDownloadExp] = useState("");
+    const [downloadResume, setDownloadResume] = useState("");
 
     const [haveExperience, setHaveExperience] = useState('no');
-    const [yearsOfExp, setYearsOfExp] = useState(null);
+    const [yearsOfExp, setYearsOfExp] = useState("");
     const [completed, setCompleted] = useState(0);
 
     const name = useSelector(selectName);
@@ -74,7 +74,7 @@ export default function CompleteProfile({ navigation }) {
         setUpload(true);
         await axios.get(api + 'getNull/' + userId).then(res => {
             if(res.data[1] != null){
-                setCompleted(parseFloat(res.data));
+                setCompleted(parseFloat(res.data[0]));
                 if(res.data[1].profile_photo){
                     setProfile(res.data[1].profile_photo);
                 }
@@ -324,7 +324,9 @@ export default function CompleteProfile({ navigation }) {
                             onValueChange={(itemValue, itemIndex) => {
                                 setQualification(itemValue);
                                 getSubQualification(itemValue);
+                                console.log(qualification);
                             }}>
+                                <Picker.Item value="" label="Choose Qualificaton" />
                             {qData.map((item, index) => (
                                 <Picker.Item key={index} value={item.id} label={item.title} />
                             ))}
@@ -334,7 +336,9 @@ export default function CompleteProfile({ navigation }) {
                             selectedValue={subQualification}
                             onValueChange={(itemValue, itemIndex) => {
                                 setSubQualification(itemValue);
+                                console.log(subQualification);
                             }}>
+                                <Picker.Item value="" label="Choose Sub Qualificaton" />
                             {subQData.map((item, index) => (
                                 <Picker.Item key={index} value={item.id} label={item.title} />
                             ))}
@@ -347,6 +351,7 @@ export default function CompleteProfile({ navigation }) {
                                 setCategory(itemValue);
                                 getSubCategory(itemValue);
                             }}>
+                                <Picker.Item value="" label="Choose Category" />
                             {catData.map((item, index) => (
                                 <Picker.Item key={index} label={item.cat_name} value={item.id} />
                             ))}
@@ -359,6 +364,7 @@ export default function CompleteProfile({ navigation }) {
                                     onValueChange={(itemValue, itemIndex) =>
                                         setSubCategory(itemValue)
                                     }>
+                                        <Picker.Item value="" label="Choose Sub Category" />
                                     {subCatData.map((item, index) => (
                                         <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
                                     ))}
@@ -391,6 +397,7 @@ export default function CompleteProfile({ navigation }) {
                                     onValueChange={(itemValue, itemIndex) => 
                                         setYearsOfExp(itemValue)
                                     }>
+                                        <Picker.Item value="" label="Choose Years of Eperience" />
                                     <Picker.Item value={1} label='1 Year' />
                                     <Picker.Item value={2} label='2 Years' />
                                     <Picker.Item value={3} label='3 Years' />

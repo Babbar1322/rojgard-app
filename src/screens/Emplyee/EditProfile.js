@@ -1,12 +1,11 @@
 import axios from 'axios';
 import AnimatedLottieView from 'lottie-react-native';
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, Modal, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Image, Modal } from 'react-native';
 import { useSelector } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
-import * as DocumentPicker from 'expo-document-picker';
 import { Bar } from 'react-native-progress';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { Loading } from '../../components/lottie';
 import { api, color } from '../../config/config';
@@ -21,8 +20,6 @@ export default function EditProfile({ navigation }) {
     const [profile, setProfile] = useState('');
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState(null);
-    const [resume, setResume] = useState(null);
-    const [experience, setExperience] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
     const [progress, setProgress] = useState(0);
 
@@ -57,94 +54,6 @@ export default function EditProfile({ navigation }) {
         }
     }
 
-    const pickResume = async () => {
-        const result = await DocumentPicker.getDocumentAsync({
-            type: ['image/*', 'application/pdf']
-        });
-        if (result.type !== 'cancel') {
-            if(result.size > 1500000){
-                return Alert.alert('File Size is too large.', 'Please choose a file >1.5MB')
-            }
-            setLoading(true);
-            setIsUploading(true);
-            setResume(result);
-            const formData = new FormData();
-            formData.append('resume', {
-                uri: result.uri,
-                name: result.name,
-                type: result.mimeType
-            });
-            formData.append('userId', userId);
-            await axios.post(api + 'updateDocument', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                onUploadProgress: e => {
-                    setProgress((e.loaded / e.total).toFixed(2))
-                },
-            }).then((res) => {
-                setLoading(false);
-                setIsUploading(false);
-                setProgress(0);
-            }).catch(err => {
-                console.log(err);
-                setLoading(false);
-                setIsUploading(false);
-                setProgress(0);
-                if (err.toString().endsWith('405')) {
-                    alert('You must complete your profile before updating it.');
-                    return;
-                }
-                alert('Something went wrong while updating your resume');
-            });
-        }
-    }
-
-    const pickExperience = async () => {
-        const result = await DocumentPicker.getDocumentAsync({
-            type: ['image/*', 'application/pdf']
-        });
-        // return console.log(result);
-        if (result.type !== 'cancel') {
-            if(result.size > 1500000){
-                return Alert.alert('File Size is too large.', 'Please choose a file smaller than 1.5MB')
-            }
-            setLoading(true);
-            setIsUploading(true);
-            setExperience(result);
-            const formData = new FormData();
-            formData.append('experience', {
-                uri: result.uri,
-                name: result.name,
-                type: result.mimeType
-            });
-            formData.append('userId', userId);
-            await axios.post(api + 'updateDocument', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                onUploadProgress: e => {
-                    setProgress((e.loaded / e.total).toFixed(2))
-                },
-            })
-                .then((res) => {
-                    setIsUploading(false);
-                    setProgress(0);
-                    setLoading(false);
-                }).catch(err => {
-                    console.log(err);
-                    setLoading(false);
-                    setIsUploading(false);
-                    setProgress(0);
-                    if (err.toString().endsWith('405')) {
-                        alert('You must complete your profile before updating it.');
-                        return;
-                    }
-                    alert('Something went wrong while updating your experience');
-                });
-        }
-    }
-
     const uploadImage = async (pic) => {
         setLoading(true);
         setIsUploading(true);
@@ -163,20 +72,14 @@ export default function EditProfile({ navigation }) {
                 setProgress((e.loaded / e.total).toFixed(2))
             },
         }).then((res) => {
-            setLoading(false);
-            setIsUploading(false);
             setProgress(0);
         }).catch(err => {
             console.log(err);
-            setLoading(false);
-            setIsUploading(false);
             setProgress(0);
-            if (err.toString().endsWith('405')) {
-                alert('You must complete your profile before updating it.');
-                return;
-            }
             alert('Something went wrong while updating your profile photo');
         });
+        setLoading(false);
+        setIsUploading(false);
     }
 
     const upload = async () => {
@@ -207,8 +110,8 @@ export default function EditProfile({ navigation }) {
                 <View style={[styles.justifyCenter, { backgroundColor: '#00000050', flex: 1, paddingHorizontal: '10%' }]}>
                     {isUploading ?
                     <>
-                    <Text style={[styles.text_center, styles.bold, {color: '#fff'}]}>Uploading</Text>
-                        <Bar progress={parseFloat(progress)} width={null} color={color.white} borderColor={color.white} borderWidth={5} height={20} borderRadius={20} /> </>:
+                    <Text style={[styles.text_center, styles.bold, {color: '#fff', marginBottom: '2%'}]}>Uploading</Text>
+                        <Bar progress={parseFloat(progress)} width={null} color={color.white} borderColor={color.white} borderWidth={5} height={20} borderRadius={20} /></>:
                         <AnimatedLottieView source={Loading} autoPlay loop style={{ width: '20%', alignSelf: 'center' }} />}
                 </View>
             </Modal>
@@ -244,24 +147,9 @@ export default function EditProfile({ navigation }) {
                         style={[styles.input, styles.shadow]}
                         placeholder='Phone Number'
                         keyboardType='number-pad'
+                        editable={false}
                         value={phone}
                         onChangeText={(e) => setPhone(e)} />
-
-                    <Text style={[styles.bold, { color: 'red', fontSize: 12 }]}>* Only PDF or Images are allowed</Text>
-                    <View style={[styles.row, styles.justifyAround, { marginHorizontal: '2%' }]}>
-                        <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={pickResume}>
-                            <TouchableOpacity activeOpacity={0.7} style={{ borderColor: color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={pickResume}>
-                                <Feather name="file" size={24} color={color.red} />
-                            </TouchableOpacity>
-                            <Text style={[styles.text_center, { fontSize: 12, width: '90%' }]}>{resume ? resume.name : 'Update\nResume'}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} style={styles.filePill} onPress={pickExperience}>
-                            <TouchableOpacity activeOpacity={0.7} style={{ borderColor: color.red, borderWidth: 1, borderRadius: 30, paddingHorizontal: 10, paddingVertical: 10 }} onPress={pickExperience}>
-                                <Feather name="file" size={24} color={color.red} />
-                            </TouchableOpacity>
-                            <Text style={[styles.text_center, { fontSize: 12, width: '90%' }]}>{experience ? experience.name : 'Update\nExperience'}</Text>
-                        </TouchableOpacity>
-                    </View>
 
                     <TouchableOpacity style={[styles.btn_outline, { marginTop: '10%' }]} activeOpacity={0.5} onPress={upload}>
                         <Text style={[styles.bold, styles.text_center, { color: color.red, fontSize: 15 }]}>Update</Text>

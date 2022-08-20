@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StatusBar, Image, TextInput, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Loading, success } from '../../components/lottie';
 import styles from '../../config/styles';
@@ -12,6 +12,8 @@ import { setLogin } from '../../redux/slice/authSlice';
 
 export default function ProviderSignup({ navigation }) {
    const dispatch = useDispatch();
+
+   const [pushToken, setPushToken] = useState(null);
 
    const [name, setName] = useState('');
    const [email, setEmail] = useState('');
@@ -30,7 +32,7 @@ export default function ProviderSignup({ navigation }) {
          return alert('Please Check All Feilds!');
       };
       await axios.post(api + 'register', {
-         "name": name, "email": email, "phone": phone, "password": password, "role": "2"
+         "name": name, "email": email, "phone": phone, "password": password, "role": "2", token: pushToken
       }).then(res => {
 
          if (res.status === 200) {
@@ -103,6 +105,14 @@ export default function ProviderSignup({ navigation }) {
          )
       }
    }
+
+   useEffect(() => {
+      async function setToken(){
+          const token = await AsyncStorage.getItem('pushToken');
+          setPushToken(token);
+      };
+      setToken();
+  }, []);
 
    return (
       <View style={[styles.container]}>

@@ -13,6 +13,7 @@ import { setLogin } from '../../redux/slice/authSlice';
 
 export default function Signup({ route, navigation }) {
    const dispatch = useDispatch();
+   const [pushToken, setPushToken] = useState(null);
 
    const [sponsorId, setSponsorId] = useState("");
    const [sponsorData, setSponsorData] = useState(null);
@@ -34,7 +35,7 @@ export default function Signup({ route, navigation }) {
       };
 
       await axios.post(api + 'register', {
-         "sponsorId": sponsorId, "name": name, "email": email, "phone": phone, "password": password, "role": "1"
+         "sponsorId": sponsorId, "name": name, "email": email, "phone": phone, "password": password, "role": "1", token: pushToken
       }).then(res => {
          if (res.status === 200) {
             setRegisterSucess(true);
@@ -151,6 +152,11 @@ export default function Signup({ route, navigation }) {
    }
 
    useEffect(() => {
+      const getToken = async () => {
+         const token = await AsyncStorage.getItem('pushToken');
+         setPushToken(token);
+      }
+      getToken();
       if(route.params){
          setSponsorId(route.params.id);
          axios.get(api + 'checkSponsor/?sponsorId=' + route.params.id).then(res => {

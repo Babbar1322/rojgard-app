@@ -29,6 +29,7 @@ export default function Tickets({ navigation }) {
         setLoading(true);
         await axios.get(api + 'getTicket/?id=' + userId).then(res => {
             setData(res.data);
+            console.log(res.data);
         }).catch(err => {
             console.log(err);
         });
@@ -61,7 +62,7 @@ export default function Tickets({ navigation }) {
             )
         } else {
             return (
-                data.length === '0' ? <View>
+                data.length > 0 ? <View>
                     {data.map((item, index) => (
                         item.status == 'pending' ?
                             <TouchableOpacity key={index} style={[styles.listItem, styles.row, styles.shadow_sm]} onPress={() => navigation.navigate('Support', { chatId: item.id })}>
@@ -94,7 +95,9 @@ export default function Tickets({ navigation }) {
                             </View>
                     ))}
                 </View>: 
-                <AnimatedLottieView source={noData} autoPlay loop style={{flex: 1, width: '90%', marginTop: '20%', alignSelf: 'center'}} />
+                <View>
+                    <Text style={[styles.text_center, styles.bold, styles.h1, {marginTop: '50%'}]}>Great, There's not any tickets{"\n"}It Means there's no problem in app</Text>
+                </View>
             )
         }
     }

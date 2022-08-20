@@ -69,7 +69,7 @@ export default function JobDetails({ route, navigation }) {
                         <View style={[styles.row, styles.shadow_sm, styles.detailsView]}>
                             <Image source={{ uri: 'https://rojgar.biz/' + data.image }} style={{ width: 100, height: 100, resizeMode: 'contain', borderRadius: 10 }} />
                             <View style={{ marginLeft: '5%' }}>
-                                <Text style={[styles.bold, styles.h1, { maxWidth: '80%' }]}>{data.title}</Text>
+                                <Text style={[styles.bold, styles.h1, { maxWidth: '90%' }]}>{data.title}</Text>
                                 <Text style={[styles.bold, { maxWidth: '100%' }]}>Offered by: {data.provider[0].name}</Text>
                                 <Text style={[styles.bold]}>{data.location}</Text>
                             </View>

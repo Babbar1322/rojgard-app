@@ -54,7 +54,7 @@ export default function AddJob({ navigation }) {
     };
 
     const sendData = async () => {
-        if(!image || !title || !city || !category || !subCategory || !employees || !minSalary || !maxSalary || !description){
+        if(!image || !title || !city || !category || !employees || !minSalary || !maxSalary || !description){
             alert('Add Fields are required!');
             return;
         }
@@ -204,8 +204,8 @@ export default function AddJob({ navigation }) {
                         <Text>Upload image for your job</Text>
                     </View>
                         </View>
-                    <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job Title' onChangeText={(e) => setTitle(e)} />
-                    <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job City' onChangeText={(e) => setCity(e)} />
+                    <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job Title' onChangeText={(e) => setTitle(e)} value={title} />
+                    <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job City' onChangeText={(e) => setCity(e)} value={city} />
                     <View style={[styles.row, styles.justifyBetween]}>
                         <Picker selectedValue={category} style={[styles.input, styles.shadow_sm, { width: subCatData.length === 0 ?  '100%' : '48%' }]} onValueChange={(e) => {
                             setCategory(e)
@@ -222,12 +222,12 @@ export default function AddJob({ navigation }) {
                             ))}
                         </Picker>}
                     </View>
-                    <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Employees Required' keyboardType='number-pad' onChangeText={(e) => setEmployees(e)} />
+                    <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Employees Required' keyboardType='number-pad' onChangeText={(e) => setEmployees(e)} value={employees} />
                     <View style={[styles.row, styles.justifyBetween]}>
-                        <TextInput style={[styles.input, styles.shadow_sm, { width: '48%' }]} placeholder='Minimum Salary' keyboardType='number-pad' onChangeText={(e) => setMinSalary(e)} />
-                        <TextInput style={[styles.input, styles.shadow_sm, { width: '48%' }]} placeholder='Maximum Salary' keyboardType='number-pad' onChangeText={(e) => setMaxSalary(e)} />
+                        <TextInput style={[styles.input, styles.shadow_sm, { width: '48%' }]} placeholder='Minimum Salary' keyboardType='number-pad' onChangeText={(e) => setMinSalary(e)} value={minSalary} />
+                        <TextInput style={[styles.input, styles.shadow_sm, { width: '48%' }]} placeholder='Maximum Salary' keyboardType='number-pad' onChangeText={(e) => setMaxSalary(e)} value={maxSalary} />
                     </View>
-                    <TextInput style={[styles.input, styles.shadow_sm, { textAlignVertical: 'top' }]} placeholder='Description' numberOfLines={5} multiline={true} onChangeText={(e) => setDescription(e)} />
+                    <TextInput style={[styles.input, styles.shadow_sm, { textAlignVertical: 'top' }]} placeholder='Description' numberOfLines={5} multiline={true} onChangeText={(e) => setDescription(e)} value={description} />
                     <TouchableOpacity activeOpacity={0.5} style={[styles.btn_outline, { marginVertical: '5%' }]} onPress={sendData}>
                         <Text style={[styles.bold, styles.text_center, { color: color.red }]}>Submit</Text>
                     </TouchableOpacity>

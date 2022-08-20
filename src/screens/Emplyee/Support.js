@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
 import moment from 'moment';
+import { Ionicons } from '@expo/vector-icons';
 
 import styles from '../../config/styles';
 import { api, color } from '../../config/config';
@@ -82,12 +83,15 @@ export default function Support({ route, navigation }) {
     }, []);
     return (
         <View style={styles.container}>
-            <View style={{ paddingVertical: '5%' }}>
-                <Text style={[styles.bold, styles.text_center, { fontSize: 16 }]}>Chat with Admin</Text>
+            <View style={[styles.row, styles.justifyBetween, { paddingVertical: '4%', paddingHorizontal: '5%' }]}>
+                <View style={styles.row}>
+                    <Ionicons name='chevron-back' size={35} color={'black'} onPress={() => navigation.goBack()} />
+                    <Text style={[styles.bold, styles.text_center, { fontSize: 16 }]}>Chat with Admin</Text>
+                </View>
             </View>
             <FlatList
                 data={chat}
-                inverted
+                // inverted
                 keyExtractor={(item, index) => index.toString()}
                 ref={ScrollRef}
                 style={{ flex: 1, paddingHorizontal: '5%' }}

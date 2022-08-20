@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, ImageBackground, Image, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import * as Progress from 'react-native-progress';
@@ -83,8 +83,8 @@ export default function Profile({ navigation }) {
                     height: 300, paddingHorizontal: '5%'
                 }]}>
                     {profileImage !== null ?
-                        <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + profileImage }} style={[styles.image, { borderColor: '#fff' }]} /> :
-                        <Image source={{ uri: 'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg' }} style={[styles.image, { borderColor: '#fff' }]} />}
+                        <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + profileImage }} style={[styles.image, { borderColor: '#fff', backgroundColor: '#eee' }]} /> :
+                        <Image source={{ uri: 'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg' }} style={[styles.image, { borderColor: '#fff', backgroundColor: '#eee' }]} />}
                     <View style={{ marginLeft: '5%', maxWidth: '60%' }}>
                         <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginBottom: '5%' }]}>{name}</Text>
                         <Text style={[styles.h1, styles.bold, { fontSize: 22, color: '#fff', marginBottom: '5%' }]}>#{userId}</Text>
