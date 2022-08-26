@@ -115,6 +115,7 @@ export default function Tickets({ navigation }) {
                             <>
                                 <Text style={[styles.bold, styles.h1, styles.text_center, { color: color.white, paddingVertical: '5%' }]}>Raise new Ticket</Text>
                                 <Picker style={styles.pill} mode='dropdown' onValueChange={(e) => setTopic(e)} selectedValue={topic}>
+                                    <Picker.Item value={''} label="Select a category" />
                                     <Picker.Item value={'General'} label="General" />
                                     <Picker.Item value={'Tech Support'} label="Tech Support" />
                                     <Picker.Item value={'Enquiries'} label="Enquiries" />

@@ -26,7 +26,7 @@ export default function Support({ route, navigation }) {
             setChat(Groups(res.data.chat));
             setLoading(false);
         }).then(() => {
-            ScrollRef.current.scrollToOffset({ animated: true, offset: 0 });
+            ScrollRef.current.scrollToEnd();
         }).catch(err => {
             setLoading(false);
             console.log(err);

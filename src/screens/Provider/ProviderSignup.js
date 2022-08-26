@@ -56,7 +56,6 @@ export default function ProviderSignup({ navigation }) {
          }
       }).catch(err => {
          setLoading(false);
-         alert("Something went wrong!");
          if(err.toString().endsWith('405')){
             alert('Email or Phone already exist');
          }
@@ -107,11 +106,9 @@ export default function ProviderSignup({ navigation }) {
    }
 
    useEffect(() => {
-      async function setToken(){
-          const token = await AsyncStorage.getItem('pushToken');
-          setPushToken(token);
-      };
-      setToken();
+         AsyncStorage.getItem('pushToken', (err, res) => {
+            setPushToken(res);
+         });
   }, []);
 
    return (

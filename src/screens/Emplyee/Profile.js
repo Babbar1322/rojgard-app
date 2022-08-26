@@ -93,10 +93,10 @@ export default function Profile({ navigation }) {
                     </View>
                 </ImageBackground>
                 <View style={{ paddingHorizontal: '5%', marginTop: '5%' }}>
-                    <View style={{paddingVertical: '2%'}}>
-                        <Text style={{fontSize: 12, fontWeight: '500'}}>Profile Setup</Text>
+                    <View style={{ paddingVertical: '2%' }}>
+                        <Text style={{ fontSize: 12, fontWeight: '500' }}>Profile Setup</Text>
                         <Progress.Bar progress={parseFloat(progress)} width={null} height={20} color={color.red} borderRadius={30} />
-                        <Text style={{fontSize: 12, fontWeight: '500', textAlign: 'right'}}>{progress*100}% Completed</Text>
+                        <Text style={{ fontSize: 12, fontWeight: '500', textAlign: 'right' }}>{progress * 100}% Completed</Text>
                     </View>
                     {profileStatus == 1 ? null : <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
                         onPress={() => navigation.navigate('CompleteProfile')}>
@@ -111,7 +111,7 @@ export default function Profile({ navigation }) {
                     <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
                         onPress={() => navigation.navigate('AppliedJobs')}>
                         <MaterialCommunityIcons name="briefcase-account-outline" size={30} color={color.red} />
-                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>My Jobs</Text>
+                        <Text style={[styles.bold, { fontSize: 16, marginLeft: '5%' }]}>Applied Jobs</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.row, { paddingVertical: '2%', marginVertical: '2%' }]}
                         onPress={() => navigation.navigate('EditProfile')}>

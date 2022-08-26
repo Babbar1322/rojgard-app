@@ -8,9 +8,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import AnimatedLottieView from 'lottie-react-native';
 import axios from 'axios';
 import { RadioButton } from 'react-native-paper';
+import { Ionicons, Feather } from '@expo/vector-icons';
 
 import styles from '../../config/styles';
-import { Ionicons, Feather } from '@expo/vector-icons';
 import { color, api } from '../../config/config';
 import { completedProfile, selectName, selectUserId } from '../../redux/slice/authSlice';
 import { Loading } from '../../components/lottie';
@@ -205,19 +205,15 @@ export default function CompleteProfile({ navigation }) {
         await axios.get(api + 'getSubCategory?catId=' + catId).then(res => {
             if (!res.data.subcategory) {
                 setSubCatData([]);
-                setLoading(false);
-                setUpload(false);
             } else {
                 setSubCatData(res.data.subcategory);
-                setLoading(false);
-                setUpload(false);
             }
         }).catch(err => {
-            setLoading(false);
-            setUpload(false);
             console.log(err);
             alert('Something went wrong!');
         });
+        setLoading(false);
+        setUpload(false);
     }
 
     const getQualification = async () => {
@@ -225,26 +221,22 @@ export default function CompleteProfile({ navigation }) {
         setUpload(true);
         await axios.get(api + 'getQualification').then(res => {
             setQData(res.data);
-            setUpload(false);
-            setLoading(false);
         }).catch(err => {
             console.log(err);
-            setUpload(false);
-            setLoading(false);
         });
+        setUpload(false);
+        setLoading(false);
     }
     const getSubQualification = async (qId) => {
         setUpload(true);
         setLoading(true);
         await axios.get(api + 'getSubQualification?qId=' + qId).then(res => {
             setSubQData(res.data);
-            setUpload(false);
-            setLoading(false);
         }).catch(err => {
             console.log(err);
-            setUpload(false);
-            setLoading(false);
         });
+        setUpload(false);
+        setLoading(false);
     }
 
     useEffect(() => {

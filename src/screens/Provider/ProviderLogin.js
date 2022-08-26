@@ -83,11 +83,9 @@ export default function ProviderLogin({ route, navigation }) {
     }
 
     useEffect(() => {
-        async function setToken(){
-            const token = await AsyncStorage.getItem('pushToken');
-            setPushToken(token);
-        };
-        setToken();
+            AsyncStorage.getItem('pushToken', (err, res) => {
+                    setPushToken(res);
+            });
     }, []);
     return (
         <View style={[styles.container]}>

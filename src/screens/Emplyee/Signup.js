@@ -152,11 +152,9 @@ export default function Signup({ route, navigation }) {
    }
 
    useEffect(() => {
-      const getToken = async () => {
-         const token = await AsyncStorage.getItem('pushToken');
-         setPushToken(token);
-      }
-      getToken();
+         AsyncStorage.getItem('pushToken', (err, res) => {
+            setPushToken(res);
+         });
       if(route.params){
          setSponsorId(route.params.id);
          axios.get(api + 'checkSponsor/?sponsorId=' + route.params.id).then(res => {

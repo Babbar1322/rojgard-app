@@ -57,7 +57,7 @@ export default function AppliedJobs({ navigation }) {
                                 </View>
                                 {item.status == 'Accepted' && <Text style={{color: 'green'}}>Approved</Text>}
                                 {item.status == 'Rejected' && <Text style={{color: 'red'}}>Rejected</Text>}
-                                {item.status == 'Pending' && <Text style={{color: 'blue'}}>Pending</Text>}
+                                {item.status == 'Pending' && <Text style={{color: 'blue'}}>In Review</Text>}
                             </View>
                             <View>
                                 <Text style={[styles.bold, { fontSize: 12, textAlign: 'right' }]}>Min - {item.job.min_salary}</Text>

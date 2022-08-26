@@ -6,16 +6,14 @@ import { color, api } from '../../config/config';
 import axios from 'axios';
 import AnimatedLottieView from 'lottie-react-native';
 import { Loading } from '../../components/lottie';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ForgotPassword({ route, navigation }) {
 
-    const [userId, setUserId] = useState("");
     const [visible, setVisible] = useState(false);
-    const [exist, setExist] = useState(false);
-    const [email, setEmail] = useState(null);
     const [phone, setPhone] = useState(null);
     const [verified, setVerified] = useState(false);
-    const [password, setPassword] = useState(null);
+    const [otp, setOtp] = useState(null);
 
     const [loading, setLoading] = useState(false);
 
@@ -24,29 +22,13 @@ export default function ForgotPassword({ route, navigation }) {
         Keyboard.dismiss();
   
         await axios.post(api + 'forgotPassword', {
-            userId: userId, exist: exist, email: email, phone: phone, verified: verified, password: password
+            phone: phone, otpSent: verified
         }).then(res => {
-            if(res.data === 'Exist'){
-                setExist(true);
-                setVisible(true);
-            }
-            if(res.data === 'Verified'){
-                setVerified(true);
-            }
-            if(res.data === 'Changed'){
-                navigation.goBack();
-            }
+            console.log(res.data);
+            AsyncStorage.setItem("Otp", res.data[0]);
+            setVerified(res.data[1]);
         }).catch(err => {
             console.log(err);
-            if(err.toString().endsWith('406')){
-                Alert.alert('Sorry', "You can't Reset your password, because we disabled your account for some reasons.");
-            }
-            if(err.toString().endsWith('405')){
-                Alert.alert('Not Found', 'Account not Found');
-            }
-            if(err.toString().endsWith('400')){
-                Alert.alert('Invalid Details', "Your Email or Phone Doesn't matched!");
-            }
         });
         setLoading(false);
      }
@@ -59,14 +41,12 @@ export default function ForgotPassword({ route, navigation }) {
         } else {
             return(
                 <View style={{ paddingHorizontal: '7%' }}>
-                    <TextInput style={[styles.input, styles.shadow]} placeholder='Enter UserID' autoCapitalize='characters' autoCorrect={false} value={userId} editable={!exist} onChangeText={(e) => setUserId(e)} />
+                    <TextInput style={[styles.input, styles.shadow]} placeholder='Enter Phone Number' keyboardType='number-pad' autoCorrect={false} editable={verified ? false : true} value={phone} onChangeText={(e) => setPhone(e)} />
 
-                    {visible && <TextInput style={[styles.input, styles.shadow]} placeholder='Enter Email' autoCapitalize='none' keyboardType='email-address' autoComplete='email' autoCorrect={false} value={email} editable={!verified} onChangeText={(e) => setEmail(e)} />}
-                    {visible && <TextInput style={[styles.input, styles.shadow]} placeholder='Enter Phone' autoCapitalize='none' value={phone} keyboardType='number-pad' autoComplete='tel' autoCorrect={false} editable={!verified} onChangeText={(e) => setPhone(e)} />}
-                    {verified && <TextInput style={[styles.input, styles.shadow]} placeholder='Create New Password' secureTextEntry onChangeText={(e) => setPassword(e)} />}
+                    {verified && <TextInput style={[styles.input, styles.shadow]} placeholder='Enter OTP' keyboardType='number-pad' autoCapitalize='none' value={otp} onChangeText={(e) => setOtp(e)} maxLength={6} />}
 
                     <TouchableOpacity style={[styles.btn]} activeOpacity={0.5} onPress={forgot}>
-                        <Text style={[styles.bold, styles.text_center, { color: color.white, fontSize: 15 }]}>Next Step</Text>
+                        <Text style={[styles.bold, styles.text_center, { color: color.white, fontSize: 15 }]}>Get OTP</Text>
                     </TouchableOpacity>
                 </View>
             )
