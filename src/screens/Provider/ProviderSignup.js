@@ -56,7 +56,7 @@ export default function ProviderSignup({ navigation }) {
          }
       }).catch(err => {
          setLoading(false);
-         if(err.toString().endsWith('405')){
+         if (err.toString().endsWith('405')) {
             alert('Email or Phone already exist');
          }
          console.log(err);
@@ -69,47 +69,47 @@ export default function ProviderSignup({ navigation }) {
             <AnimatedLottieView source={registerSuccess ? success : Loading} loop autoPlay style={{ flex: 1, width: '30%', alignSelf: 'center', marginTop: '25%' }} />
          )
       } else {
-         return(
-         <View style={{ paddingHorizontal: '7%' }}>
-            <TextInput
-               style={[styles.input, styles.shadow]}
-               placeholder='Full Name'
-               autoComplete='off'
-               autoCapitalize='words'
-               onChangeText={(e) => setName(e)} />
-            <TextInput
-               style={[styles.input, styles.shadow]}
-               placeholder='Email'
-               textContentType='emailAddress'
-               keyboardType='email-address'
-               autoCapitalize='none'
-               autoCorrect={false}
-               autoCompleteType='email'
-               onChangeText={(e) => setEmail(e)} />
-            <TextInput
-               style={[styles.input, styles.shadow]}
-               placeholder='Phone Number'
-               keyboardType='number-pad'
-               onChangeText={(e) => setPhone(e)} />
-            <TextInput
-               style={[styles.input, styles.shadow]}
-               placeholder='Create Password'
-               secureTextEntry
-               onChangeText={(e) => setPassword(e)} />
+         return (
+            <View style={{ paddingHorizontal: '7%' }}>
+               <TextInput
+                  style={[styles.input, styles.shadow]}
+                  placeholder='Full Name'
+                  autoComplete='off'
+                  autoCapitalize='words'
+                  onChangeText={(e) => setName(e)} />
+               <TextInput
+                  style={[styles.input, styles.shadow]}
+                  placeholder='Email'
+                  textContentType='emailAddress'
+                  keyboardType='email-address'
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  autoCompleteType='email'
+                  onChangeText={(e) => setEmail(e)} />
+               <TextInput
+                  style={[styles.input, styles.shadow]}
+                  placeholder='Phone Number'
+                  keyboardType='number-pad'
+                  onChangeText={(e) => setPhone(e)} />
+               <TextInput
+                  style={[styles.input, styles.shadow]}
+                  placeholder='Create Password'
+                  secureTextEntry
+                  onChangeText={(e) => setPassword(e)} />
 
-            <TouchableOpacity style={[styles.btn_outline, { marginTop: '10%' }]} activeOpacity={0.5} onPress={onSignup}>
-               <Text style={[styles.bold, styles.text_center, { color: color.red, fontSize: 15 }]}>Signup</Text>
-            </TouchableOpacity>
-         </View>
+               <TouchableOpacity style={[styles.btn_outline, { marginTop: '10%' }]} activeOpacity={0.5} onPress={onSignup}>
+                  <Text style={[styles.bold, styles.text_center, { color: color.red, fontSize: 15 }]}>Signup</Text>
+               </TouchableOpacity>
+            </View>
          )
       }
    }
 
    useEffect(() => {
-         AsyncStorage.getItem('pushToken', (err, res) => {
-            setPushToken(res);
-         });
-  }, []);
+      AsyncStorage.getItem('pushToken', (err, res) => {
+         setPushToken(res);
+      });
+   }, []);
 
    return (
       <View style={[styles.container]}>
@@ -120,8 +120,9 @@ export default function ProviderSignup({ navigation }) {
          <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={'handled'}>
             {screen()}
             <View>
-               <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('ProviderLogin')}>
-                  <Text style={{ marginVertical: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Already a Provider? {"\n"} Login</Text>
+               <TouchableOpacity activeOpacity={0.5} style={{ alignSelf: 'center' }} onPress={() => navigation.navigate('ProviderLogin')}>
+                  <Text style={{ marginTop: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Already a Provider?</Text>
+                  <Text style={{ fontWeight: '500', fontSize: 15, textAlign: 'center', color: color.red }}>Login</Text>
                </TouchableOpacity>
             </View>
          </ScrollView>

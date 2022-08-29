@@ -6154,6 +6154,11 @@ react-native-paper@^4.12.4:
     color "^3.1.2"
     react-native-iphone-x-helper "^1.3.1"
 
+react-native-pg-react-native-sdk@^2.1.10:
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/react-native-pg-react-native-sdk/-/react-native-pg-react-native-sdk-2.1.10.tgz#1e08f0a28e9842a3345ce6508771ba1a05ea8ac4"
+  integrity sha512-OfI4XKr6UmpEtC6i14cv9iWzAyFbWtOTVHNR9viKtYJvAYUXqaKnQvpWdaYfyD7t9NwbNNvLl3TfiFHlp31Z5w==
+
 react-native-progress@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-5.0.0.tgz#f5ac6ceaeee27f184c660b00f29419e82a9d0ab0"

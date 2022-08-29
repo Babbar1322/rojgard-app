@@ -62,7 +62,7 @@ export default function Signup({ route, navigation }) {
          }
       }).catch(err => {
          setLoading(false);
-         if(err.toString().endsWith('405')){
+         if (err.toString().endsWith('405')) {
             alert('Email or Phone already exist!');
             return;
          }
@@ -72,7 +72,7 @@ export default function Signup({ route, navigation }) {
 
    const handleSponsor = async () => {
       await axios.get(api + 'checkSponsor/?sponsorId=' + sponsorId).then(res => {
-         if(res.data.user == null){
+         if (res.data.user == null) {
             setSponsorErr(true);
             return;
          } else {
@@ -142,8 +142,9 @@ export default function Signup({ route, navigation }) {
                   </TouchableOpacity>
                </View>
                <View>
-                  <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Login')}>
-                     <Text style={{ marginVertical: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Already Have An Account? {"\n"} Login</Text>
+                  <TouchableOpacity activeOpacity={0.5} style={{ alignSelf: 'center' }} onPress={() => navigation.navigate('Login')}>
+                     <Text style={{ marginTop: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Already Have An Account?</Text>
+                     <Text style={{ fontWeight: '500', fontSize: 15, textAlign: 'center', color: color.red }}>Login</Text>
                   </TouchableOpacity>
                </View>
             </>
@@ -152,13 +153,13 @@ export default function Signup({ route, navigation }) {
    }
 
    useEffect(() => {
-         AsyncStorage.getItem('pushToken', (err, res) => {
-            setPushToken(res);
-         });
-      if(route.params){
+      AsyncStorage.getItem('pushToken', (err, res) => {
+         setPushToken(res);
+      });
+      if (route.params) {
          setSponsorId(route.params.id);
          axios.get(api + 'checkSponsor/?sponsorId=' + route.params.id).then(res => {
-            if(res.data.user == null){
+            if (res.data.user == null) {
                setSponsorErr(true);
                return;
             } else {

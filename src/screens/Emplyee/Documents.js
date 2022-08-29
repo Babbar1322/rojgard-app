@@ -19,6 +19,7 @@ export default function Documents({ navigation }) {
     const getDocs = async () => {
         setLoading(true);
         await axios.get(api + 'getDocs/' + userId).then(res => {
+            console.log(res.data);
             setData(res.data);
         }).catch(err => {
             console.log(err);
@@ -88,6 +89,24 @@ export default function Documents({ navigation }) {
             return (
                 <View style={styles.listContainer}>
                     <View style={[styles.listItem, styles.shadow_sm]}>
+                        <Text style={[styles.bold]}>Qualifications</Text>
+                        {data.qualification ?
+                            <>
+                                <Text style={{ marginVertical: '2%' }}> - {data.qualification.title}</Text>
+                                {data.sub_qualification ? <Text style={{ marginVertical: '2%' }}>  -- {data.sub_qualification.title}</Text> : null}
+                            </> :
+                            <Text>Not Added Yet</Text>}
+                    </View>
+                    <View style={[styles.listItem, styles.shadow_sm]}>
+                        <Text style={[styles.bold]}>Category</Text>
+                        {data.qualification ?
+                            <>
+                                <Text style={{ marginVertical: '2%' }}> - {data.category.cat_name}</Text>
+                                {data.sub_category ? <Text style={{ marginVertical: '2%' }}>  -- {data.sub_category.sub_cat_name}</Text> : null}
+                            </> :
+                            <Text>Not Added Yet</Text>}
+                    </View>
+                    <View style={[styles.listItem, styles.shadow_sm]}>
                         <Text style={{ fontWeight: '500' }}>Resume</Text>
                         {data.resume ? data.resume.endsWith('pdf') ?
                             <>
@@ -99,16 +118,16 @@ export default function Documents({ navigation }) {
                                 <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + data.resume }} style={{ width: '100%', height: 400, borderRadius: 10 }} />
                             </> :
                             <Text>Not Uploaded Yet</Text>}
-                            {data.resume && <View style={[styles.row, styles.justifyAround]}>
-                                    <TouchableOpacity style={[styles.row, styles.btn, styles.shadow_sm, styles.justifyCenter, { backgroundColor: color.white, marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => updateDocument('resume')}>
-                                        <Ionicons name="ios-cloud-upload" size={20} color="#000" />
-                                        <Text style={[styles.bold, { color: '#000', marginLeft: '2%' }]}>Update</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={[styles.row, styles.btn, styles.justifyCenter, styles.shadow_sm, { backgroundColor: 'red', marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => deleteFile(data.resume, 'resume')}>
-                                        <Ionicons name="trash" size={20} color="#fff" />
-                                        <Text style={[styles.bold, { color: '#fff' }]}>Delete</Text>
-                                    </TouchableOpacity>
-                                </View>}
+                        {data.resume && <View style={[styles.row, styles.justifyAround]}>
+                            <TouchableOpacity style={[styles.row, styles.btn, styles.shadow_sm, styles.justifyCenter, { backgroundColor: color.white, marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => updateDocument('resume')}>
+                                <Ionicons name="ios-cloud-upload" size={20} color="#000" />
+                                <Text style={[styles.bold, { color: '#000', marginLeft: '2%' }]}>Update</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.row, styles.btn, styles.justifyCenter, styles.shadow_sm, { backgroundColor: 'red', marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => deleteFile(data.resume, 'resume')}>
+                                <Ionicons name="trash" size={20} color="#fff" />
+                                <Text style={[styles.bold, { color: '#fff' }]}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>}
                     </View>
                     <View style={[styles.listItem, styles.shadow_sm]}>
                         <Text style={{ fontWeight: '500' }}>Experience Letter</Text>
@@ -121,17 +140,17 @@ export default function Documents({ navigation }) {
                             <>
                                 <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + data.experience }} style={{ width: '100%', height: 400, borderRadius: 10 }} />
                             </> :
-                                <Text>Not Uploaded Yet</Text>}
-                                {data.experience && <View style={[styles.row, styles.justifyAround]}>
-                                    <TouchableOpacity style={[styles.row, styles.btn, styles.shadow_sm, styles.justifyCenter, { backgroundColor: color.white, marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => updateDocument('experience')}>
-                                        <Ionicons name="ios-cloud-upload" size={20} color="#000" />
-                                        <Text style={[styles.bold, { color: '#000', marginLeft: '2%' }]}>Update</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={[styles.row, styles.btn, styles.justifyCenter, styles.shadow_sm, { backgroundColor: 'red', marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => deleteFile(data.experience, 'experience')}>
-                                        <Ionicons name="trash" size={20} color="#fff" />
-                                        <Text style={[styles.bold, { color: '#fff' }]}>Delete</Text>
-                                    </TouchableOpacity>
-                                </View>}
+                            <Text>Not Uploaded Yet</Text>}
+                        {data.experience && <View style={[styles.row, styles.justifyAround]}>
+                            <TouchableOpacity style={[styles.row, styles.btn, styles.shadow_sm, styles.justifyCenter, { backgroundColor: color.white, marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => updateDocument('experience')}>
+                                <Ionicons name="ios-cloud-upload" size={20} color="#000" />
+                                <Text style={[styles.bold, { color: '#000', marginLeft: '2%' }]}>Update</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.row, styles.btn, styles.justifyCenter, styles.shadow_sm, { backgroundColor: 'red', marginVertical: '2%', paddingHorizontal: '7%' }]} onPress={() => deleteFile(data.experience, 'experience')}>
+                                <Ionicons name="trash" size={20} color="#fff" />
+                                <Text style={[styles.bold, { color: '#fff' }]}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>}
                     </View>
                 </View>
             )

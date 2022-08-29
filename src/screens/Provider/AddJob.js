@@ -23,7 +23,7 @@ export default function AddJob({ navigation }) {
     const userName = useSelector(selectName);
     const userId = useSelector(selectUserId);
     const panelRef = useRef(null);
-    
+
     const [catData, setCatData] = useState([]);
     const [subCatData, setSubCatData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -54,7 +54,7 @@ export default function AddJob({ navigation }) {
     };
 
     const sendData = async () => {
-        if(!image || !title || !city || !category || !employees || !minSalary || !maxSalary || !description){
+        if (!image || !title || !city || !category || !employees || !minSalary || !maxSalary || !description) {
             alert('Add Fields are required!');
             return;
         }
@@ -77,21 +77,21 @@ export default function AddJob({ navigation }) {
         formData.append('userId', userId);
 
         await axios.post(api + 'addJob',
-        formData,
-        {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        }).then(res => {
-            setLoading(false);
-            if(res.status === 200){
-                navigation.navigate('Success');
-            }
-        }).catch(err => {
-            setLoading(false);
-            console.log(err);
-            alert('Something went wrong!');
-        });
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }).then(res => {
+                setLoading(false);
+                if (res.status === 200) {
+                    navigation.navigate('Success');
+                }
+            }).catch(err => {
+                setLoading(false);
+                console.log(err);
+                alert('Something went wrong!');
+            });
     }
 
     const logout = () => {
@@ -120,7 +120,7 @@ export default function AddJob({ navigation }) {
         await axios.get(api + 'userInfo/' + userId).then(res => {
             const newData = res.data[0];
             let image = null;
-            if(newData.dp !== null){
+            if (newData.dp !== null) {
                 image = newData.dp.profile_photo;
             }
             const state = {
@@ -184,41 +184,42 @@ export default function AddJob({ navigation }) {
     }
 
     const screen = () => {
-        if(loading){
-            return(
-                <AnimatedLottieView source={Loading} autoPlay loop style={{flex: 1, width: '30%', alignSelf: 'center', marginTop: '50%'}} />
+        if (loading) {
+            return (
+                <AnimatedLottieView source={Loading} autoPlay loop style={{ flex: 1, width: '30%', alignSelf: 'center', marginTop: '50%' }} />
             )
         } else {
-            return(
+            return (
                 <View style={{ paddingHorizontal: '5%' }}>
                     <View style={[styles.row, { marginBottom: '5%', justifyContent: 'center' }]}>
-                    {image ?
-                        <TouchableOpacity activeOpacity={0.7} onPress={launchGallery}>
-                            <Image source={{ uri: image.uri }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} />
-                        </TouchableOpacity> :
-                        <TouchableOpacity activeOpacity={0.7} style={{ borderWidth: 2, borderColor: color.red, borderRadius: 50, padding: '4%' }} onPress={launchGallery}>
-                            <Ionicons name="camera-sharp" size={30} color={color.red} />
-                        </TouchableOpacity>}
+                        {image ?
+                            <TouchableOpacity activeOpacity={0.7} onPress={launchGallery}>
+                                <Image source={{ uri: image.uri }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} />
+                            </TouchableOpacity> :
+                            <TouchableOpacity activeOpacity={0.7} style={{ borderWidth: 2, borderColor: color.red, borderRadius: 50, padding: '4%' }} onPress={launchGallery}>
+                                <Ionicons name="camera-sharp" size={30} color={color.red} />
+                            </TouchableOpacity>}
                         <View style={{ marginLeft: 10 }}>
-                        <Text style={[styles.bold, { fontSize: 25, maxWidth: 300 }]}>Add Image</Text>
-                        <Text>Upload image for your job</Text>
-                    </View>
+                            <Text style={[styles.bold, { fontSize: 25, maxWidth: 300 }]}>Add Image</Text>
+                            <Text>Upload image for your job</Text>
                         </View>
+                    </View>
                     <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job Title' onChangeText={(e) => setTitle(e)} value={title} />
                     <TextInput style={[styles.input, styles.shadow_sm]} placeholder='Job City' onChangeText={(e) => setCity(e)} value={city} />
                     <View style={[styles.row, styles.justifyBetween]}>
-                        <Picker selectedValue={category} style={[styles.input, styles.shadow_sm, { width: subCatData.length === 0 ?  '100%' : '48%' }]} onValueChange={(e) => {
+                        <Picker selectedValue={category} style={[styles.input, styles.shadow_sm, { width: subCatData.length === 0 ? '100%' : '48%' }]} onValueChange={(e) => {
                             setCategory(e)
-                            getSubCategory(e)}}>
-                            {/* <Picker.Item value='' label='Category' /> */}
+                            getSubCategory(e)
+                        }}>
+                            <Picker.Item value='' label='Choose Category' />
                             {catData.map((item, index) => (
-                            <Picker.Item key={index} label={item.cat_name} value={item.id} />
+                                <Picker.Item key={index} label={item.cat_name} value={item.id} />
                             ))}
                         </Picker>
                         {subCatData.length !== 0 && <Picker selectedValue={subCategory} style={[styles.input, styles.shadow_sm, { width: '48%' }]} onValueChange={(e) => setSubCategory(e)}>
-                        {/* <Picker.Item value='' label='Sub Category' /> */}
-                        {subCatData.map((item, index) => (
-                            <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
+                            <Picker.Item value='' label='Choose Sub Category' />
+                            {subCatData.map((item, index) => (
+                                <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
                             ))}
                         </Picker>}
                     </View>

@@ -57,7 +57,7 @@ export default function ProviderLogin({ route, navigation }) {
             if (err.toString().endsWith('400')) {
                 alert('Invalid Details');
             }
-            if(err.toString().endsWith('405')){
+            if (err.toString().endsWith('405')) {
                 Alert.alert('Sorry', "You can't Login to your account, because we disabled your account for some reasons.");
             }
         })
@@ -83,9 +83,9 @@ export default function ProviderLogin({ route, navigation }) {
     }
 
     useEffect(() => {
-            AsyncStorage.getItem('pushToken', (err, res) => {
-                    setPushToken(res);
-            });
+        AsyncStorage.getItem('pushToken', (err, res) => {
+            setPushToken(res);
+        });
     }, []);
     return (
         <View style={[styles.container]}>
@@ -96,8 +96,9 @@ export default function ProviderLogin({ route, navigation }) {
             <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={'handled'}>
                 {screen()}
                 <View>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('ProviderSignup')}>
-                        <Text style={{ marginVertical: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Don't Have An Account? {"\n"} Become a Provider</Text>
+                    <TouchableOpacity activeOpacity={0.5} style={{ alignSelf: 'center' }} onPress={() => navigation.navigate('ProviderSignup')}>
+                        <Text style={{ marginTop: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Don't Have An Account?</Text>
+                        <Text style={{ fontWeight: '500', fontSize: 15, textAlign: 'center', color: color.red }}>Become a Provider</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

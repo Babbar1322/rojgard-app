@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
     },
     listItem: {
         width: '95%',
-        paddingVertical: '2%',
-        paddingHorizontal: '2%',
+        paddingVertical: '4%',
+        paddingHorizontal: '4%',
         marginVertical: '2%',
         marginHorizontal: '2.5%',
         backgroundColor: 'white',
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: '#fff',
         marginHorizontal: '5%',
-        paddingVertical: '2%',
-        paddingHorizontal: '2%',
+        paddingVertical: '3%',
+        paddingHorizontal: '3%',
         marginVertical: '2%'
     },
     chatRight: {

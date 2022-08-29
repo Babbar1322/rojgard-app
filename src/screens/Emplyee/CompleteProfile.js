@@ -73,30 +73,30 @@ export default function CompleteProfile({ navigation }) {
         setLoading(true);
         setUpload(true);
         await axios.get(api + 'getNull/' + userId).then(res => {
-            if(res.data[1] != null){
+            if (res.data[1] != null) {
                 setCompleted(parseFloat(res.data[0]));
-                if(res.data[1].profile_photo){
+                if (res.data[1].profile_photo) {
                     setProfile(res.data[1].profile_photo);
                 }
-                if(res.data[1].qualification){
+                if (res.data[1].qualification) {
                     setQualification(res.data[1].qualification);
                 }
-                if(res.data[1].sub_qualification){
+                if (res.data[1].sub_qualification) {
                     setSubQualification(res.data[1].sub_qualification);
                 }
-                if(res.data[1].category){
+                if (res.data[1].category) {
                     setCategory(res.data[1].category);
                 }
-                if(res.data[1].haveExperience){
+                if (res.data[1].haveExperience) {
                     setHaveExperience(res.data[1].haveExperience);
-                    if(res.data[1].yearsOfExp){
+                    if (res.data[1].yearsOfExp) {
                         setYearsOfExp(res.data[1].yearsOfExp);
                     }
-                    if(res.data[1].experience){
+                    if (res.data[1].experience) {
                         setDownloadExp(res.data[1].experience);
                     }
                 }
-                if(res.data[1].resume){
+                if (res.data[1].resume) {
                     setDownloadResume(res.data[1].resume);
                 }
             }
@@ -166,7 +166,7 @@ export default function CompleteProfile({ navigation }) {
             type: ['image/*', 'application/pdf']
         });
         if (result.type !== 'cancel') {
-            if(result.size > 1500000){
+            if (result.size > 1500000) {
                 return Alert.alert('File Size is too large', 'Please choose a file smaller than 1.5MB')
             }
             setResume(result);
@@ -178,7 +178,7 @@ export default function CompleteProfile({ navigation }) {
             type: ['image/*', 'application/pdf']
         });
         if (result.type !== 'cancel') {
-            if(result.size > 1500000){
+            if (result.size > 1500000) {
                 return Alert.alert('File Size is too large', 'Please choose a file smaller than 1.5MB')
             }
             setExperience(result);
@@ -294,19 +294,19 @@ export default function CompleteProfile({ navigation }) {
                                 <Image source={{ uri: image.uri }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} />
                             </TouchableOpacity> :
                             <TouchableOpacity activeOpacity={0.7} style={{ borderWidth: 2, borderColor: color.red, borderRadius: 50, padding: profile ? 0 : '4%' }} onPress={() => profile ? null : setModalVisible(true)}>
-                                {profile ? 
-                                <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + profile }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} /> :
-                                <Ionicons name="camera-sharp" size={30} color={color.red} />}
+                                {profile ?
+                                    <Image source={{ uri: 'https://rojgar.biz/uploads/documents/' + profile }} style={{ width: 80, height: 80, resizeMode: 'contain', borderRadius: 50 }} /> :
+                                    <Ionicons name="camera-sharp" size={30} color={color.red} />}
                             </TouchableOpacity>}
                         <View style={{ marginLeft: 10 }}>
                             <Text style={[styles.bold, { fontSize: 25, maxWidth: 300 }]}>Hi, {name}!</Text>
                             <Text>Upload your profile photo</Text>
                         </View>
                     </View>
-                    <View style={{paddingVertical: '2%'}}>
-                        <Text style={{fontSize: 12, fontWeight: '500'}}>Profile Setup</Text>
+                    <View style={{ paddingVertical: '2%' }}>
+                        <Text style={{ fontSize: 12, fontWeight: '500' }}>Profile Setup</Text>
                         <Progress.Bar progress={completed} width={null} height={20} color={color.red} borderRadius={30} />
-                        <Text style={{fontSize: 12, fontWeight: '500', textAlign: 'right'}}>{completed*100}% Completed</Text>
+                        <Text style={{ fontSize: 12, fontWeight: '500', textAlign: 'right' }}>{completed * 100}% Completed</Text>
                     </View>
                     <View style={{ marginHorizontal: '2%' }}>
                         <Text style={[styles.bold]}>Qualification</Text>
@@ -318,7 +318,7 @@ export default function CompleteProfile({ navigation }) {
                                 getSubQualification(itemValue);
                                 console.log(qualification);
                             }}>
-                                <Picker.Item value="" label="Choose Qualificaton" />
+                            <Picker.Item value="" label="Choose Qualificaton" />
                             {qData.map((item, index) => (
                                 <Picker.Item key={index} value={item.id} label={item.title} />
                             ))}
@@ -330,7 +330,7 @@ export default function CompleteProfile({ navigation }) {
                                 setSubQualification(itemValue);
                                 console.log(subQualification);
                             }}>
-                                <Picker.Item value="" label="Choose Sub Qualificaton" />
+                            <Picker.Item value="" label="Choose Sub Qualificaton" />
                             {subQData.map((item, index) => (
                                 <Picker.Item key={index} value={item.id} label={item.title} />
                             ))}
@@ -343,7 +343,7 @@ export default function CompleteProfile({ navigation }) {
                                 setCategory(itemValue);
                                 getSubCategory(itemValue);
                             }}>
-                                <Picker.Item value="" label="Choose Category" />
+                            <Picker.Item value="" label="Choose Category" />
                             {catData.map((item, index) => (
                                 <Picker.Item key={index} label={item.cat_name} value={item.id} />
                             ))}
@@ -356,7 +356,7 @@ export default function CompleteProfile({ navigation }) {
                                     onValueChange={(itemValue, itemIndex) =>
                                         setSubCategory(itemValue)
                                     }>
-                                        <Picker.Item value="" label="Choose Sub Category" />
+                                    <Picker.Item value="" label="Choose Sub Category" />
                                     {subCatData.map((item, index) => (
                                         <Picker.Item key={index} label={item.sub_cat_name} value={item.id} />
                                     ))}
@@ -386,10 +386,10 @@ export default function CompleteProfile({ navigation }) {
                                     style={[styles.pill, styles.shadow_sm]}
                                     selectedValue={yearsOfExp}
                                     mode='dropdown'
-                                    onValueChange={(itemValue, itemIndex) => 
+                                    onValueChange={(itemValue, itemIndex) =>
                                         setYearsOfExp(itemValue)
                                     }>
-                                        <Picker.Item value="" label="Choose Years of Eperience" />
+                                    <Picker.Item value="" label="Choose Years of Eperience" />
                                     <Picker.Item value={1} label='1 Year' />
                                     <Picker.Item value={2} label='2 Years' />
                                     <Picker.Item value={3} label='3 Years' />

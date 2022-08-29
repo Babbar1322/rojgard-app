@@ -7,19 +7,31 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import styles from '../../config/styles';
 import { api, color } from '../../config/config';
-import { selectName, selectUserId, setIsActive } from '../../redux/slice/authSlice';
+import { selectName, selectUserId, setIsActive, selectPhone, selectEmail } from '../../redux/slice/authSlice';
 import { Loading, paymentSuccess } from '../../components/lottie';
 import Card from '../../../assets/Images/Card.jpg';
+import RNPgReactNativeSdk from 'react-native-pg-react-native-sdk';
 
 export default function ActivateId({ navigation }) {
     const dispatch = useDispatch();
     const id = useSelector(selectUserId);
     const name = useSelector(selectName);
-    const [balance, setBalance] = useState(0);
+    const phone = useSelector(selectPhone);
+    const email = useSelector(selectEmail);
     const [packageData, setPackageData] = useState('');
 
     const [loading, setLoading] = useState(false);
     const [activateSuccess, setActivateSuccess] = useState(false);
+
+    const getToken = async () => {
+        setLoading(true);
+        await axios.get(api + 'getToken').then(res => {
+            handlePayment(res.data.oid, res.data.data.cftoken);
+        }).catch(err => {
+            console.log(err);
+        });
+        setLoading(false);
+    }
 
     const getPackage = async () => {
         setLoading(true);
@@ -27,51 +39,46 @@ export default function ActivateId({ navigation }) {
         await axios.get(api + 'getPackage').then(res => {
             setPackageData(res.data);
             setLoading(false);
-            getBalance();
         }).catch(err => {
             setLoading(false);
             console.log(err);
         });
     }
 
-    const getBalance = async () => {
+    const handlePayment = (oid, token) => {
         setLoading(true);
-        await axios.get(api + 'getBalance/' + id).then(res => {
-            setLoading(false);
-            setBalance(res.data[0]);
-        }).catch(err => {
-            setLoading(false);
-            console.log(err);
-        });
-    }
-
-    const activate = async () => {
-        Keyboard.dismiss();
-        setLoading(true);
-        setActivateSuccess(false);
-
-        if (balance < packageData.amount) {
-            setLoading(false);
-            return alert('Insufficient Balance!');
+        var mode = 'TEST';
+        var map = {
+            appId: '114446001d889a6d17c08b7ed5644411',
+            orderId: oid.toString(),
+            orderCurrency: 'INR',
+            orderAmount: packageData.amount.toString(),
+            customerPhone: phone,
+            customerEmail: email,
+            tokenData: token.toString(),
+            notifyUrl: '',
+            customerName: name,
         };
-
-        await axios.post(api + 'activateUser', {
-            userId: id, amount: packageData.amount
-        }).then(res => {
-            getBalance();
-            if (res.status == 200) {
-                setActivateSuccess(true);
-                dispatch({ setIsActive: 1 });
+        RNPgReactNativeSdk.startPaymentWEB(map, mode, result => {
+            var res = JSON.parse(result);
+            if (res.txStatus != 'CANCELLED') {
+                axios.post(api + 'activateUser', {
+                    userId: id, amount: packageData.amount, orderId: oid
+                }).then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setLoading(false);
+                        setActivateSuccess(true);
+                        dispatch(setIsActive(true));
+                    }
+                }).catch(err => {
+                    console.log(err);
+                });
+            } else {
+                alert('Payment Cancelled by User');
             }
-        }).catch(err => {
-            getBalance();
-            setLoading(false);
-            if (err.toString().endsWith('400')) {
-                alert('Insufficient Balance!');
-            }
-            console.log(err);
         });
-    }
+    };
 
     const screen = () => {
         if (loading) {
@@ -82,16 +89,21 @@ export default function ActivateId({ navigation }) {
             return (
                 <View style={{ paddingHorizontal: '5%' }}>
                     {activateSuccess ?
-                        <AnimatedLottieView source={paymentSuccess} autoPlay loop={false} style={{ flex: 1, width: '100%', alignSelf: 'center', marginTop: '20%' }} /> :
+                        <>
+                            <AnimatedLottieView source={paymentSuccess} autoPlay loop={false} style={{ flex: 1, width: '100%', alignSelf: 'center', marginTop: '20%' }} />
+                            <TouchableOpacity style={[styles.btn_sm, { alignSelf: 'center', paddingHorizontal: '10%', marginTop: '5%' }]} onPress={() => navigation.goBack()}>
+                                <Text style={[styles.bold, { color: '#fff' }]}>Go Back</Text>
+                            </TouchableOpacity>
+                        </> :
                         <>
                             <Text style={[styles.bold, styles.h1, { marginVertical: '5%' }]}>Activate Your Account{'\n'}with Coins</Text>
-                            <Text style={[styles.bold, { textAlign: 'right' }]}>Your Balance: {balance}</Text>
+                            {/* <Text style={[styles.bold, { textAlign: 'right' }]}>Your Balance: {balance}</Text> */}
                             <ImageBackground source={Card} style={[styles.card, styles.shadow_sm]} resizeMode='stretch' borderRadius={20}>
-                                <Text style={[styles.bold, styles.h1, {color: color.white, marginVertical: '3%'}]}>{packageData.name}</Text>
-                                <Text style={[styles.bold, {color: color.white, marginVertical: '3%'}]}>Cost: {packageData.amount} Coins</Text>
-                                <Text style={[styles.bold, {color: color.white, marginVertical: '3%', fontSize: 16}]}>{name} #{id}</Text>
+                                <Text style={[styles.bold, styles.h1, { color: color.white, marginVertical: '3%' }]}>{packageData.name}</Text>
+                                <Text style={[styles.bold, { color: color.white, marginVertical: '3%' }]}>Cost: {packageData.amount} Coins</Text>
+                                <Text style={[styles.bold, { color: color.white, marginVertical: '3%', fontSize: 16 }]}>{name} #{id}</Text>
                             </ImageBackground>
-                            <TouchableOpacity style={[styles.btn, styles.shadow_sm, { marginVertical: '5%' }]} onPress={activate}>
+                            <TouchableOpacity style={[styles.btn, styles.shadow_sm, { marginVertical: '5%' }]} onPress={getToken}>
                                 <Text style={[styles.bold, styles.text_center, { color: '#fff' }]}>Activate Package</Text>
                             </TouchableOpacity>
                         </>}

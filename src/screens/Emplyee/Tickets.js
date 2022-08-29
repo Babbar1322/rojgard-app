@@ -76,7 +76,7 @@ export default function Tickets({ navigation }) {
                                         </View>}
                                     <Text style={[styles.bold, { color: '#000000' }]}>{item.subject}</Text>
                                     <Text style={[styles.bold, { color: '#000000' }]}>{item.topic}</Text>
-                                    <Text style={[styles.bold, { color: item.status == 'pending' ? 'blue' : 'green' }]}>{item.status == 'pending' ? "Pending" : "Completed"}</Text>
+                                    <Text style={[styles.bold, { color: item.status == 'pending' ? 'blue' : 'green' }]}>{item.status == 'pending' ? "Open" : "Closed"}</Text>
                                 </View>
                             </TouchableOpacity> :
                             <View key={index} style={[styles.listItem, styles.row, styles.shadow_sm]}>
@@ -94,10 +94,10 @@ export default function Tickets({ navigation }) {
                                 </View>
                             </View>
                     ))}
-                </View>: 
-                <View>
-                    <Text style={[styles.text_center, styles.bold, styles.h1, {marginTop: '50%'}]}>Great, There's not any tickets{"\n"}It Means there's no problem in app</Text>
-                </View>
+                </View> :
+                    <View>
+                        <Text style={[styles.text_center, styles.bold, styles.h1, { marginTop: '50%' }]}>Great, There's not any tickets{"\n"}It Means there's no problem in app</Text>
+                    </View>
             )
         }
     }

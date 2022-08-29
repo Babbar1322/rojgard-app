@@ -38,7 +38,7 @@ export default function Login({ route, navigation }) {
                 setloginSuccess(true);
                 const data = res.data.user;
                 let image = null;
-                if(res.data.detail){
+                if (res.data.detail) {
                     image = res.data.detail.profile_photo;
                 };
                 AsyncStorage.setItem('@user', JSON.stringify(data));
@@ -68,7 +68,7 @@ export default function Login({ route, navigation }) {
             if (err.toString().endsWith('400')) {
                 alert('Invalid Details');
             }
-            if(err.toString().endsWith('405')){
+            if (err.toString().endsWith('405')) {
                 Alert.alert('Sorry', "You can't Login to your account, because we disabled your account for some reasons.");
             }
         });
@@ -96,9 +96,9 @@ export default function Login({ route, navigation }) {
             )
         }
     }
-    
+
     useEffect(() => {
-        async function setToken(){
+        async function setToken() {
             const token = await AsyncStorage.getItem('pushToken');
             setPushToken(token);
         };
@@ -113,8 +113,9 @@ export default function Login({ route, navigation }) {
             <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={'handled'}>
                 {screen()}
                 <View>
-                    <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Signup')}>
-                        <Text style={{ marginVertical: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Don't Have An Account? {"\n"} Sign Up</Text>
+                    <TouchableOpacity style={{ alignSelf: 'center' }} activeOpacity={0.5} onPress={() => navigation.navigate('Signup')}>
+                        <Text style={{ marginTop: '4%', fontWeight: '500', fontSize: 15, textAlign: 'center' }}>Don't Have An Account?</Text>
+                        <Text style={{ fontWeight: '500', fontSize: 15, textAlign: 'center', color: color.red }}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
